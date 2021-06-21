@@ -1,0 +1,1738 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+	  "title": "Comeback",
+	  "contact": {},
+	  "version": "1.0"
+	},
+	"servers": [
+	  {
+		"url": "https://comeback-backend.herokuapp.com/",
+		"variables": {}
+	  }
+	],
+	"paths": {
+	  "/register": {
+		"post": {
+		  "tags": [
+			"Auth"
+		  ],
+		  "summary": "Register",
+		  "operationId": "Register",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/RegisterRequest"
+				},
+				"example": {
+				  "lastName": "doc2",
+				  "firstName": "doc",
+				  "email": "doc3@test.com",
+				  "password": "123456",
+				  "gdate": "12/11/1981",
+				  "phone": "1111111",
+				  "gener": "male",
+				  "typePeronalID": "0000000",
+				  "personalID": "0000000"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/login": {
+		"post": {
+		  "tags": [
+			"Auth"
+		  ],
+		  "summary": "Login",
+		  "operationId": "Login",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/LoginRequest"
+				},
+				"example": {
+				  "email": "doc3@test.com",
+				  "password": "123456"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/auth": {
+		"get": {
+		  "tags": [
+			"Auth"
+		  ],
+		  "summary": "Auth",
+		  "operationId": "Auth",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/user/professionals": {
+		"get": {
+		  "tags": [
+			"User"
+		  ],
+		  "summary": "Get All Professionals",
+		  "operationId": "GetAllProfessionals",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/user": {
+		"put": {
+		  "tags": [
+			"User"
+		  ],
+		  "summary": "Update",
+		  "operationId": "Update",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/UpdateRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3",
+				  "data": {}
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"delete": {
+		  "tags": [
+			"User"
+		  ],
+		  "summary": "Delete",
+		  "operationId": "Delete",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/DeleteRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"post": {
+		  "tags": [
+			"Packs"
+		  ],
+		  "summary": "Get By ID",
+		  "operationId": "GetByID",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByIDRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/packs": {
+		"post": {
+		  "tags": [
+			"Packs"
+		  ],
+		  "summary": "Add",
+		  "operationId": "Add",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/AddRequest"
+				},
+				"example": {
+				  "namePak": "Pack4",
+				  "descPack": "desc pack",
+				  "price": 2000,
+				  "currency": "USD"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/skills": {
+		"post": {
+		  "tags": [
+			"Skills"
+		  ],
+		  "summary": "Add",
+		  "operationId": "PostAdd",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/AddRequest1"
+				},
+				"example": {
+				  "fileUrl": "Pack4",
+				  "userID": "desc pack",
+				  "nameSkill": "asdasdas"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"get": {
+		  "tags": [
+			"Skills"
+		  ],
+		  "summary": "Get All",
+		  "operationId": "GetAll1",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"put": {
+		  "tags": [
+			"Skills"
+		  ],
+		  "summary": "Update",
+		  "operationId": "PutUpdate1",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/UpdateRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4",
+				  "data": {}
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"delete": {
+		  "tags": [
+			"Skills"
+		  ],
+		  "summary": "Delete",
+		  "operationId": "Delete12",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/DeleteRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/skillById": {
+		"post": {
+		  "tags": [
+			"Skills"
+		  ],
+		  "summary": "Get By ID",
+		  "operationId": "PostGetByID",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByIDRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/getSkillByProfessionalId": {
+		"post": {
+		  "tags": [
+			"Skills"
+		  ],
+		  "summary": "Get By Professional ID",
+		  "operationId": "GetByProfessionalID",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByProfessionalIDRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/conditions": {
+		"post": {
+		  "tags": [
+			"Conditions"
+		  ],
+		  "summary": "Add",
+		  "operationId": "PostAdd1",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/AddRequest2"
+				},
+				"example": {
+				  "userID": "Pack4",
+				  "typeCondition": "desc pack",
+				  "nameCondition": "asdasdas"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"get": {
+		  "tags": [
+			"Conditions"
+		  ],
+		  "summary": "Get All",
+		  "operationId": "GetAll12",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"put": {
+		  "tags": [
+			"Conditions"
+		  ],
+		  "summary": "Update",
+		  "operationId": "PutUpdate12",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/UpdateRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4",
+				  "data": {}
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"delete": {
+		  "tags": [
+			"Conditions"
+		  ],
+		  "summary": "Delete",
+		  "operationId": "Delete123",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/DeleteRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/conditionById": {
+		"post": {
+		  "tags": [
+			"Conditions"
+		  ],
+		  "summary": "Get By ID",
+		  "operationId": "PostGetByID1",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByIDRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/conditionByUserId": {
+		"post": {
+		  "tags": [
+			"Conditions"
+		  ],
+		  "summary": "Get By Professional ID",
+		  "operationId": "PostGetByProfessionalID",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByProfessionalIDRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/settingsById": {
+		"post": {
+		  "tags": [
+			"Settings"
+		  ],
+		  "summary": "Get By ID",
+		  "operationId": "PostGetByID12",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByIDRequest"
+				},
+				"example": {
+				  "id": "Pack4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/settings": {
+		"get": {
+		  "tags": [
+			"Settings"
+		  ],
+		  "summary": "Get All",
+		  "operationId": "GetAll123",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"put": {
+		  "tags": [
+			"Settings"
+		  ],
+		  "summary": "Update",
+		  "operationId": "PutUpdate123",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/UpdateRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4",
+				  "data": {}
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"delete": {
+		  "tags": [
+			"Settings"
+		  ],
+		  "summary": "Delete",
+		  "operationId": "Delete1234",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/DeleteRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/feedbackById": {
+		"post": {
+		  "tags": [
+			"Feedback"
+		  ],
+		  "summary": "Get By ID",
+		  "operationId": "PostGetByID123",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByIDRequest"
+				},
+				"example": {
+				  "id": "Pack4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/feedback": {
+		"get": {
+		  "tags": [
+			"Feedback"
+		  ],
+		  "summary": "Get All",
+		  "operationId": "GetAll1234",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"put": {
+		  "tags": [
+			"Feedback"
+		  ],
+		  "summary": "Update",
+		  "operationId": "PutUpdate1234",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/UpdateRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4",
+				  "data": {}
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"delete": {
+		  "tags": [
+			"Feedback"
+		  ],
+		  "summary": "Delete",
+		  "operationId": "Delete12345",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/DeleteRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/pay": {
+		"post": {
+		  "tags": [
+			"Pay"
+		  ],
+		  "summary": "Add",
+		  "operationId": "PostAdd12",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/AddRequest3"
+				},
+				"example": {
+				  "idUser": "asdasdasd",
+				  "namePack": "asdasdas",
+				  "NamePayment": "asdasdas"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/paymentById": {
+		"post": {
+		  "tags": [
+			"Pay"
+		  ],
+		  "summary": "Get By ID",
+		  "operationId": "PostGetByID1234",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByIDRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/payments": {
+		"get": {
+		  "tags": [
+			"Pay"
+		  ],
+		  "summary": "Get All",
+		  "operationId": "GetAll12345",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"put": {
+		  "tags": [
+			"Pay"
+		  ],
+		  "summary": "Update",
+		  "operationId": "PutUpdate12345",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/UpdateRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4",
+				  "data": {}
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"delete": {
+		  "tags": [
+			"Pay"
+		  ],
+		  "summary": "Delete",
+		  "operationId": "Delete123456",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/DeleteRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/appoiments": {
+		"post": {
+		  "tags": [
+			"Appoiments"
+		  ],
+		  "summary": "Add",
+		  "operationId": "PostAdd123",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/AddRequest4"
+				},
+				"example": {
+				  "name": "asdasdasd",
+				  "hours": "asdasdas",
+				  "professionalID": "asdasdas",
+				  "userID": "asdasdas",
+				  "day": "asdasdas",
+				  "month": "asdasdas",
+				  "year": "asdasdas"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"get": {
+		  "tags": [
+			"Appoiments"
+		  ],
+		  "summary": "Get All",
+		  "operationId": "GetAll123456",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"put": {
+		  "tags": [
+			"Appoiments"
+		  ],
+		  "summary": "Update",
+		  "operationId": "PutUpdate123456",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/UpdateRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4",
+				  "data": {}
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"delete": {
+		  "tags": [
+			"Appoiments"
+		  ],
+		  "summary": "Delete",
+		  "operationId": "Delete1234567",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/DeleteRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/appoimentsById": {
+		"post": {
+		  "tags": [
+			"Appoiments"
+		  ],
+		  "summary": "Get By ID",
+		  "operationId": "PostGetByID12345",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByIDRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/diagnostic": {
+		"post": {
+		  "tags": [
+			"Diagnostic"
+		  ],
+		  "summary": "Add",
+		  "operationId": "PostAdd1234",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/AddRequest5"
+				},
+				"example": {
+				  "professionalID": "asdasdasd",
+				  "pacientID": "asdasdas",
+				  "diagnostic": "asdasdas",
+				  "condition": "asdasdas"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"get": {
+		  "tags": [
+			"Diagnostic"
+		  ],
+		  "summary": "Get All",
+		  "operationId": "GetAll1234567",
+		  "parameters": [
+			{
+			  "name": "Content-Type",
+			  "in": "header",
+			  "description": "",
+			  "required": true,
+			  "style": "simple",
+			  "schema": {
+				"type": "string",
+				"example": "application/json"
+			  }
+			}
+		  ],
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"put": {
+		  "tags": [
+			"Diagnostic"
+		  ],
+		  "summary": "Update",
+		  "operationId": "PutUpdate1234567",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/UpdateRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4",
+				  "data": {}
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		},
+		"delete": {
+		  "tags": [
+			"Diagnostic"
+		  ],
+		  "summary": "Delete",
+		  "operationId": "Delete12345678",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/DeleteRequest"
+				},
+				"example": {
+				  "id": "602f68e7dbfc3a1bb43ad1c3"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  },
+	  "/diagnosticById": {
+		"post": {
+		  "tags": [
+			"Diagnostic"
+		  ],
+		  "summary": "Get By ID",
+		  "operationId": "PostGetByID123456",
+		  "parameters": [],
+		  "requestBody": {
+			"description": "",
+			"content": {
+			  "application/json": {
+				"schema": {
+				  "$ref": "#/components/schemas/GetByIDRequest"
+				},
+				"example": {
+				  "id": "603071953f3d4f418cbdb5b4"
+				}
+			  }
+			},
+			"required": true
+		  },
+		  "responses": {
+			"200": {
+			  "description": "",
+			  "headers": {}
+			}
+		  },
+		  "deprecated": false
+		}
+	  }
+	},
+	"components": {
+	  "schemas": {
+		"RegisterRequest": {
+		  "title": "RegisterRequest",
+		  "required": [
+			"lastName",
+			"firstName",
+			"email",
+			"password",
+			"gdate",
+			"phone",
+			"gener",
+			"typePeronalID",
+			"personalID"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"lastName": {
+			  "type": "string"
+			},
+			"firstName": {
+			  "type": "string"
+			},
+			"email": {
+			  "type": "string"
+			},
+			"password": {
+			  "type": "string"
+			},
+			"gdate": {
+			  "type": "string"
+			},
+			"phone": {
+			  "type": "string"
+			},
+			"gener": {
+			  "type": "string"
+			},
+			"typePeronalID": {
+			  "type": "string"
+			},
+			"personalID": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"lastName": "doc2",
+			"firstName": "doc",
+			"email": "doc3@test.com",
+			"password": "123456",
+			"gdate": "12/11/1981",
+			"phone": "1111111",
+			"gener": "male",
+			"typePeronalID": "0000000",
+			"personalID": "0000000"
+		  }
+		},
+		"LoginRequest": {
+		  "title": "LoginRequest",
+		  "required": [
+			"email",
+			"password"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"email": {
+			  "type": "string"
+			},
+			"password": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"email": "doc3@test.com",
+			"password": "123456"
+		  }
+		},
+		"UpdateRequest": {
+		  "title": "UpdateRequest",
+		  "required": [
+			"id",
+			"data"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"id": {
+			  "type": "string"
+			},
+			"data": {
+			  "type": "object"
+			}
+		  },
+		  "example": {
+			"id": "602f68e7dbfc3a1bb43ad1c3",
+			"data": {}
+		  }
+		},
+		"DeleteRequest": {
+		  "title": "DeleteRequest",
+		  "required": [
+			"id"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"id": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"id": "602f68e7dbfc3a1bb43ad1c3"
+		  }
+		},
+		"AddRequest": {
+		  "title": "AddRequest",
+		  "required": [
+			"namePak",
+			"descPack",
+			"price",
+			"currency"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"namePak": {
+			  "type": "string"
+			},
+			"descPack": {
+			  "type": "string"
+			},
+			"price": {
+			  "type": "integer",
+			  "format": "int32"
+			},
+			"currency": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"namePak": "Pack4",
+			"descPack": "desc pack",
+			"price": 2000,
+			"currency": "USD"
+		  }
+		},
+		"GetByIDRequest": {
+		  "title": "GetByIDRequest",
+		  "required": [
+			"id"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"id": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"id": "603071953f3d4f418cbdb5b4"
+		  }
+		},
+		"UpdateRequest1": {
+		  "title": "UpdateRequest1",
+		  "required": [
+			"id",
+			"data"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"id": {
+			  "type": "string"
+			},
+			"data": {
+			  "$ref": "#/components/schemas/Data"
+			}
+		  },
+		  "example": {
+			"id": "603071953f3d4f418cbdb5b4",
+			"data": {
+			  "descPack": "new desc pack",
+			  "price": 3000
+			}
+		  }
+		},
+		"Data": {
+		  "title": "Data",
+		  "required": [
+			"descPack",
+			"price"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"descPack": {
+			  "type": "string"
+			},
+			"price": {
+			  "type": "integer",
+			  "format": "int32"
+			}
+		  },
+		  "example": {
+			"descPack": "new desc pack",
+			"price": 3000
+		  }
+		},
+		"AddRequest1": {
+		  "title": "AddRequest1",
+		  "required": [
+			"fileUrl",
+			"userID",
+			"nameSkill"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"fileUrl": {
+			  "type": "string"
+			},
+			"userID": {
+			  "type": "string"
+			},
+			"nameSkill": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"fileUrl": "Pack4",
+			"userID": "desc pack",
+			"nameSkill": "asdasdas"
+		  }
+		},
+		"GetByProfessionalIDRequest": {
+		  "title": "GetByProfessionalIDRequest",
+		  "required": [
+			"id"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"id": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"id": "603071953f3d4f418cbdb5b4"
+		  }
+		},
+		"AddRequest2": {
+		  "title": "AddRequest2",
+		  "required": [
+			"userID",
+			"typeCondition",
+			"nameCondition"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"userID": {
+			  "type": "string"
+			},
+			"typeCondition": {
+			  "type": "string"
+			},
+			"nameCondition": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"userID": "Pack4",
+			"typeCondition": "desc pack",
+			"nameCondition": "asdasdas"
+		  }
+		},
+		"AddRequest3": {
+		  "title": "AddRequest3",
+		  "required": [
+			"idUser",
+			"namePack",
+			"NamePayment"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"idUser": {
+			  "type": "string"
+			},
+			"namePack": {
+			  "type": "string"
+			},
+			"NamePayment": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"idUser": "asdasdasd",
+			"namePack": "asdasdas",
+			"NamePayment": "asdasdas"
+		  }
+		},
+		"AddRequest4": {
+		  "title": "AddRequest4",
+		  "required": [
+			"name",
+			"hours",
+			"professionalID",
+			"userID",
+			"day",
+			"month",
+			"year"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"name": {
+			  "type": "string"
+			},
+			"hours": {
+			  "type": "string"
+			},
+			"professionalID": {
+			  "type": "string"
+			},
+			"userID": {
+			  "type": "string"
+			},
+			"day": {
+			  "type": "string"
+			},
+			"month": {
+			  "type": "string"
+			},
+			"year": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"name": "asdasdasd",
+			"hours": "asdasdas",
+			"professionalID": "asdasdas",
+			"userID": "asdasdas",
+			"day": "asdasdas",
+			"month": "asdasdas",
+			"year": "asdasdas"
+		  }
+		},
+		"AddRequest5": {
+		  "title": "AddRequest5",
+		  "required": [
+			"professionalID",
+			"pacientID",
+			"diagnostic",
+			"condition"
+		  ],
+		  "type": "object",
+		  "properties": {
+			"professionalID": {
+			  "type": "string"
+			},
+			"pacientID": {
+			  "type": "string"
+			},
+			"diagnostic": {
+			  "type": "string"
+			},
+			"condition": {
+			  "type": "string"
+			}
+		  },
+		  "example": {
+			"professionalID": "asdasdasd",
+			"pacientID": "asdasdas",
+			"diagnostic": "asdasdas",
+			"condition": "asdasdas"
+		  }
+		}
+	  },
+	  "securitySchemes": {
+		"httpBearer": {
+		  "type": "http",
+		  "scheme": "bearer"
+		}
+	  }
+	},
+	"security": [
+	  {
+		"httpBearer": []
+	  }
+	],
+	"tags": [
+	  {
+		"name": "Auth"
+	  },
+	  {
+		"name": "User"
+	  },
+	  {
+		"name": "Packs"
+	  },
+	  {
+		"name": "Skills"
+	  },
+	  {
+		"name": "Conditions"
+	  },
+	  {
+		"name": "Settings"
+	  },
+	  {
+		"name": "Feedback"
+	  },
+	  {
+		"name": "Pay"
+	  },
+	  {
+		"name": "Appoiments"
+	  },
+	  {
+		"name": "Diagnostic"
+	  }
+	]
+  }
