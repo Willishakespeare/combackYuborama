@@ -16,9 +16,9 @@ export const insertCondition = async (req: Request, res: Response) => {
     });
     if (client) {
       const newCondition = new Condition(req.body);
-      await Client.updateOne({ _id: userid }, { condition: newCondition._id });
+      await Client.updateOne({ _id: userid }, { $push: { condition: newCondition._id } });
       await newCondition.save();
-
+      
       return res.status(200).json({ msg: "Condition registered" });
     } else {
       return res.status(400).json({ msg: "not client available" });

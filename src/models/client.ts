@@ -89,10 +89,12 @@ const clientSchema: Schema<IClient> = new Schema(
       type: Schema.Types.ObjectId,
       ref: "pack",
     },
-    condition: {
-      type: Schema.Types.ObjectId,
-      ref: "condition",
-    },
+    condition: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "condition",
+      }
+    ],
     appoiments: [
       {
         type: Schema.Types.ObjectId,

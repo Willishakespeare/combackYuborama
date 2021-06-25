@@ -13,7 +13,7 @@ const conditionSchema: Schema<ICondition> = new Schema(
       required: true,
     },
     typecondition: {
-      type: String,
+      type: String, enum: ['Allergie', 'Illnesses'],
       required: true,
     }
   },
