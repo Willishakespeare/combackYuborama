@@ -17,6 +17,7 @@ import conditionRoutes from "./routes/condition.routes";
 import paymentRoutes from "./routes/payment.routes";
 import skillsRoutes from "./routes/skills.routes";
 import settingsRoutes from "./routes/settings.routes";
+import observationRoutes from "./routes/observation.routes";
 
 //init
 const app = express();
@@ -47,6 +48,7 @@ app.use(conditionRoutes);
 app.use(appoimentsRoutes);
 app.use(feedbackRoutes);
 app.use(diagnosicRoutes);
+app.use(observationRoutes);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
