@@ -33,9 +33,8 @@ export const uploadImage = async (
   blobWriter.on("error", (err: any) => next(err));
 
   blobWriter.on("finish", async () => {
-    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-      bucket.name
-    }/o/${encodeURI(blob.name)}?alt=media`;
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name
+      }/o/${encodeURI(blob.name)}?alt=media`;
 
     const Clientget = await Client.findById({ _id: id });
     const Doctorget = await Doctor.findById({ _id: id });
@@ -146,6 +145,10 @@ export const getUserById = async (req: Request, res: Response) => {
       .populate("condition", "-__v")
       .populate("appoiments", "-__v")
       .populate("diagnostics", "-__v")
+      .populate({ path:"observations", select:"observation createdAt", options: { sort: { 'createdAt': -1 } },  populate:{
+        path:"doctorid",
+        select:"name lastname"
+      }})
       .populate({
         path: "appoiments",
         select: "-__v",
