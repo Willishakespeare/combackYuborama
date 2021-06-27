@@ -145,7 +145,7 @@ export const getUserById = async (req: Request, res: Response) => {
       .populate("condition", "-__v")
       .populate("appoiments", "-__v")
       .populate("diagnostics", "-__v")
-      .populate({ path:"observations", select:"observation createdAt", populate:{
+      .populate({ path:"observations", select:"observation createdAt", options: { sort: { 'createdAt': -1 } },  populate:{
         path:"doctorid",
         select:"name lastname"
       }})
