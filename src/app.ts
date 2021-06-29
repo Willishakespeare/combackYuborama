@@ -49,6 +49,7 @@ app.use(appoimentsRoutes);
 app.use(feedbackRoutes);
 app.use(diagnosicRoutes);
 app.use(observationRoutes);
+app.use(settingsRoutes);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

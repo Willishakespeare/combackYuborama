@@ -1,3 +1,4 @@
+import { model, Schema, Document, ObjectId } from "mongoose";
 export interface IUser extends Document {
   username: string;
   email: string;
@@ -14,5 +15,6 @@ export interface IUser extends Document {
   medicalid: string;
   verify: boolean;
   photoid: string;
+  settings: ObjectId;
   comparePassword: (e: string) => Promise<boolean>;
 }

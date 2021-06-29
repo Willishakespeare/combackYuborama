@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import Client, { IClient } from "../models/client";
 import Doctor, { IDoctor } from "../models/doctor";
+import Settings, { ISettings } from "../models/settings";
 import config from "../config/config";
 import nodemailer from "nodemailer";
 import TemplateEmail from "./emailConfirm";
@@ -87,10 +88,13 @@ export const registerClient = async (req: Request, res: Response) => {
     if (client) {
       return res.status(400).json({ msg: "The user already exists" });
     } else {
+      const setting = new Settings();
+      await setting.save();
       const newClient = new Client({
         username,
         email,
         password,
+        setting: setting.id,
       });
       await mailer(
         TemplateEmail(
@@ -100,7 +104,6 @@ export const registerClient = async (req: Request, res: Response) => {
         newClient.email
       );
       await newClient.save();
-
       return res.status(200).json({ token: createTokenClient(newClient) });
     }
   } catch (error) {
@@ -163,6 +166,8 @@ export const registerDoctor = async (req: Request, res: Response) => {
     if (doctor) {
       return res.status(400).json({ msg: "The user already exists" });
     } else {
+      const setting = new Settings();
+      await setting.save();
       const newDoctor = new Doctor({
         username,
         email,
@@ -183,6 +188,7 @@ export const registerDoctor = async (req: Request, res: Response) => {
         honorarium,
         descprofile,
         availability,
+        setting: setting.id,
       });
       await mailer(
         TemplateEmail(

@@ -16,6 +16,10 @@ export interface IDoctor extends Document, IUser {
 
 const doctorSchema: Schema<IDoctor> = new Schema(
   {
+    settings: {
+      type: Schema.Types.ObjectId,
+      ref: "setting",
+    },
     username: {
       type: String,
       required: true,
