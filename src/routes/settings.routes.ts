@@ -5,10 +5,16 @@ import {
   deleteSettings,
   getSettingsById,
   getSettingsByUserId,
+  addSettings,
 } from "../controllers/settings.controllers";
 const router = Router();
 import passport from "passport";
 
+router.post(
+  "/addSettings",
+  passport.authenticate("jwt", { session: false }),
+  addSettings
+);
 router.get(
   "/settings",
   passport.authenticate("jwt", { session: false }),
