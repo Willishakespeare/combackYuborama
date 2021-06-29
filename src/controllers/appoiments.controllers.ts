@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "comebackappemail@gmail.com",
-    pass: "Comeback12345.",
+    pass: "XHG|d%|/=Y,fc6*|q1d1",
   },
 });
 
