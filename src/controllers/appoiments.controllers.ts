@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "comebackappemail@gmail.com",
-    pass: "Comeback12345.",
+    user: "Stacklycode@gmail.com",
+    pass: "XHG|d%|/=Y,fc6*|q1d1",
   },
 });
 

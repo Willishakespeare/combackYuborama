@@ -33,8 +33,9 @@ export const uploadImage = async (
   blobWriter.on("error", (err: any) => next(err));
 
   blobWriter.on("finish", async () => {
-    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name
-      }/o/${encodeURI(blob.name)}?alt=media`;
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
+      bucket.name
+    }/o/${encodeURI(blob.name)}?alt=media`;
 
     const Clientget = await Client.findById({ _id: id });
     const Doctorget = await Doctor.findById({ _id: id });
@@ -66,10 +67,12 @@ export const updateUser = async (req: Request, res: Response) => {
   if (!data || !id) {
     return res.status(400).json({ msg: "send all data please" });
   }
-  if (data.password) {
+  if (data.password && data.password.trim().length > 1) {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(data.password, salt);
     data.password = hash;
+  } else {
+    delete data.password;
   }
 
   try {
@@ -145,10 +148,16 @@ export const getUserById = async (req: Request, res: Response) => {
       .populate("condition", "-__v")
       .populate("appoiments", "-__v")
       .populate("diagnostics", "-__v")
-      .populate({ path:"observations", select:"observation createdAt", options: { sort: { 'createdAt': -1 } },  populate:{
-        path:"doctorid",
-        select:"name lastname"
-      }})
+      .populate("settings", "-__v")
+      .populate({
+        path: "observations",
+        select: "observation createdAt",
+        options: { sort: { createdAt: -1 } },
+        populate: {
+          path: "doctorid",
+          select: "name lastname",
+        },
+      })
       .populate({
         path: "appoiments",
         select: "-__v",
@@ -161,6 +170,7 @@ export const getUserById = async (req: Request, res: Response) => {
     const getDoctor = await Doctor.findOne({ _id: id })
       .populate("skills", "-__v")
       .populate("appoiments", "-__v")
+      .populate("settings", "-__v")
       .populate({
         path: "appoiments",
         select: "-__v",
@@ -185,6 +195,7 @@ export const getUserById = async (req: Request, res: Response) => {
       return res.status(200).json(getClient || getDoctor);
     }
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ msg: error.errors });
   }
 };

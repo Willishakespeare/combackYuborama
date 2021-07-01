@@ -8,11 +8,15 @@ export interface IClient extends Document, IUser {
   condition: ObjectId;
   appoiments: [ObjectId];
   diagnostics: [ObjectId];
-  observations:[ObjectId];
+  observations: [ObjectId];
 }
 
 const clientSchema: Schema<IClient> = new Schema(
   {
+    settings: {
+      type: Schema.Types.ObjectId,
+      ref: "setting",
+    },
     username: {
       type: String,
       required: true,
@@ -94,7 +98,7 @@ const clientSchema: Schema<IClient> = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "condition",
-      }
+      },
     ],
     appoiments: [
       {
