@@ -8,11 +8,10 @@ export interface IDoctor extends Document, IUser {
   whatsapp: string;
   honorarium: string;
   descprofile: string;
-  availability: [{ day: string; hour: string }];
+  availability: boolean[][];
   skills: [ObjectId];
   appoiments: [ObjectId];
   diagnostics: [ObjectId];
-  horary: boolean[][];
 }
 
 const doctorSchema: Schema<IDoctor> = new Schema(
@@ -110,10 +109,7 @@ const doctorSchema: Schema<IDoctor> = new Schema(
       type: String,
       required: true,
     },
-    availability: {
-      type: [{ type: Object }],
-      required: true,
-    },
+    availability:[[{ type: Boolean, require: true }]],
     skills: [
       {
         type: Schema.Types.ObjectId,
@@ -131,8 +127,7 @@ const doctorSchema: Schema<IDoctor> = new Schema(
         type: Schema.Types.ObjectId,
         ref: "diagnostic",
       },
-    ],
-    horary: [[{ type: Boolean, require: true }]]
+    ]
   },
   { timestamps: true, minimize: false }
 );

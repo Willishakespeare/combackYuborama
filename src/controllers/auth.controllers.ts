@@ -133,7 +133,6 @@ export const registerDoctor = async (req: Request, res: Response) => {
     whatsapp,
     honorarium,
     descprofile,
-    availability,
     skills,
   }: IDoctor = req.body;
   if (
@@ -154,15 +153,14 @@ export const registerDoctor = async (req: Request, res: Response) => {
     !noex ||
     !whatsapp ||
     !honorarium ||
-    !descprofile ||
-    !availability
+    !descprofile
   ) {
     return res.status(400).json({ msg: "Please. Send all Information" });
   }
 
   try {
     const doctor = await Doctor.findOne({ $or: [{ username }, { email }] });
-
+    const availability = Array.from({length:7},()=>Array.from({length:14},()=>false))
     if (doctor) {
       return res.status(400).json({ msg: "The user already exists" });
     } else {
