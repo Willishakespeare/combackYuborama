@@ -12,6 +12,7 @@ export interface IDoctor extends Document, IUser {
   skills: [ObjectId];
   appoiments: [ObjectId];
   diagnostics: [ObjectId];
+  horary: boolean[][];
 }
 
 const doctorSchema: Schema<IDoctor> = new Schema(
@@ -127,6 +128,7 @@ const doctorSchema: Schema<IDoctor> = new Schema(
         ref: "diagnostic",
       },
     ],
+    horary: [[{ type: Boolean, require: true }]]
   },
   { timestamps: true, minimize: false }
 );
