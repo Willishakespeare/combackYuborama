@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Client from "../models/client";
 import Doctor from "../models/doctor";
+import Condition, { ICondition } from "../models/condition";
 import { Storage } from "@google-cloud/storage";
 import bcrypt from "bcrypt";
 
@@ -33,9 +34,8 @@ export const uploadImage = async (
   blobWriter.on("error", (err: any) => next(err));
 
   blobWriter.on("finish", async () => {
-    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-      bucket.name
-    }/o/${encodeURI(blob.name)}?alt=media`;
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name
+      }/o/${encodeURI(blob.name)}?alt=media`;
 
     const Clientget = await Client.findById({ _id: id });
     const Doctorget = await Doctor.findById({ _id: id });
@@ -63,7 +63,7 @@ export const uploadImage = async (
 };
 
 export const updateUser = async (req: Request, res: Response) => {
-  const { id, data } = req.body;
+  const { id, data, condition } = req.body;
   if (!data || !id) {
     return res.status(400).json({ msg: "send all data please" });
   }
@@ -76,6 +76,16 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 
   try {
+    if (condition) {
+
+      condition.map(
+        async (e: ICondition) => {
+          const Conditionact = await Condition.findById({ _id: e._id })
+          console.log(Conditionact);
+          await Condition.updateOne({ _id: e._id }, { ...e });
+        }
+      )
+    }
     const Clientget = await Client.findById({ _id: id });
     const Doctorget = await Doctor.findById({ _id: id });
     if (Clientget) {
