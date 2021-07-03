@@ -9,6 +9,7 @@ export interface IAppoiments extends Document {
   month: number;
   year: number;
   urlzoom: string;
+  hosturlzoom: string;
   status: "complete" | "incomplete";
   recomendation: string;
   clientid: ObjectId;
@@ -41,6 +42,7 @@ const appoimentSchema: Schema<IAppoiments> = new Schema(
     month: { type: Number, required: true },
     year: { type: Number, required: true },
     urlzoom: { type: String, required: true },
+    hosturlzoom: { type: String, required: true },
     status: {
       type: String,
       enum: ["complete", "incomplete"],

@@ -1,4 +1,4 @@
-const Template = (token: string) => `
+const Template = (token: string, url: string | undefined) => `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html
   data-editor-version="2"
@@ -386,10 +386,16 @@ const Template = (token: string) => `
                                                                         font-size: 43px;
                                                                       "
                                                                       >
-                                                                      ${token}
-                                                                      ,
-                                                                      You Have a New Appoiment!&nbsp;</span
+                                                                      Hello ${token},
+                                                                      You Have a New Appoiment!</span
                                                                     >
+                                                                    <br/>
+                                                                   ${
+                                                                     url &&
+                                                                     `<a style="
+                                                                     font-size: 33px;
+                                                                   " href="${url}">url zoom<a/>`
+                                                                   }
                                                                   </div>
                                                                 </div>
                                                               </td>

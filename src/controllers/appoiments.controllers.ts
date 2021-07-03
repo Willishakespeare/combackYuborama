@@ -7,6 +7,7 @@ import Feedback from "../models/feedback";
 import config from "../config/config";
 import nodemailer from "nodemailer";
 import TemplateEmail from "./emailApoiments";
+import rp from "request-promise";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -70,31 +71,90 @@ export const insertAppoiment = async (req: Request, res: Response) => {
         _id: clientid,
       });
       if (client) {
-        const newAppoiment = new Appoiment({
-          name,
-          hours,
-          desc,
-          details,
-          day,
-          month,
-          year,
-          urlzoom: "http://",
-          recomendation,
-          doctorid,
-          clientid,
-        });
-        await Client.updateOne(
-          { _id: clientid },
-          { $push: { appoiments: newAppoiment._id } }
-        );
-        await Doctor.updateOne(
-          { _id: doctorid },
-          { $push: { appoiments: newAppoiment._id } }
-        );
-        newAppoiment.save();
-        await mailer(TemplateEmail(doctor.name), doctor.email);
-        await mailer(TemplateEmail(client.name), client.email);
-        return res.status(200).json(newAppoiment._id);
+        const payload = {
+          iss: config.development.APIKey,
+          exp: new Date().getTime() + 5000,
+        };
+        const token = jwt.sign(payload, config.development.APISecret);
+        const months = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+        const date = new Date(`${months[month]} ${day}, ${year} ${hours}:00`);
+
+        var options = {
+          method: "POST",
+          uri: "https://api.zoom.us/v2/users/Clinicaconductualvolver@gmail.com/meetings",
+          body: {
+            topic: "test create meeting",
+            type: 2,
+            start_time: date,
+            host_email: doctor.email,
+            agenda: "Hola",
+            settings: {
+              host_video: "true",
+              participant_video: "true",
+              join_before_host: "true",
+            },
+          },
+          auth: {
+            bearer: token,
+          },
+          headers: {
+            "User-Agent": "Zoom-api-Jwt-Request",
+            "content-type": "application/json",
+          },
+          json: true, //Parse the JSON string in the response
+        };
+
+        rp(options)
+          .then(async (response) => {
+            const newAppoiment = new Appoiment({
+              name,
+              hours,
+              desc,
+              details,
+              day,
+              month,
+              year,
+              urlzoom: response.join_url,
+              hosturlzoom: response.start_url,
+              recomendation,
+              doctorid,
+              clientid,
+            });
+            await Client.updateOne(
+              { _id: clientid },
+              { $push: { appoiments: newAppoiment._id } }
+            );
+            await Doctor.updateOne(
+              { _id: doctorid },
+              { $push: { appoiments: newAppoiment._id } }
+            );
+            newAppoiment.save();
+            await mailer(
+              TemplateEmail(doctor.name, response.start_url),
+              doctor.email
+            );
+            await mailer(
+              TemplateEmail(client.name, response.start_url),
+              client.email
+            );
+            return res.status(200).json(newAppoiment._id);
+          })
+          .catch(function (err) {
+            res.status(400).json({ msg: err });
+          });
       } else {
         return res.status(400).json({ msg: "not client available" });
       }
