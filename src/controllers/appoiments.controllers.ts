@@ -63,13 +63,13 @@ export const insertAppoiment = async (req: Request, res: Response) => {
   }
 
   try {
-    const doctor = await Doctor.findOne({
+    const doctor: any = await Doctor.findOne({
       _id: doctorid,
-    });
+    }).populate("settings", "-__v");
     if (doctor) {
-      const client = await Client.findOne({
+      const client: any = await Client.findOne({
         _id: clientid,
-      });
+      }).populate("settings", "-__v");
       if (client) {
         const payload = {
           iss: config.development.APIKey,
@@ -142,14 +142,18 @@ export const insertAppoiment = async (req: Request, res: Response) => {
               { $push: { appoiments: newAppoiment._id } }
             );
             newAppoiment.save();
-            await mailer(
-              TemplateEmail(doctor.name, response.start_url),
-              doctor.email
-            );
-            await mailer(
-              TemplateEmail(client.name, response.start_url),
-              client.email
-            );
+            if (doctor.settings.jsonSettings.notify_email_appointment) {
+              await mailer(
+                TemplateEmail(doctor.name, response.start_url),
+                doctor.settings.jsonSettings.email || doctor.email
+              );
+            }
+            if (client.settings.jsonSettings.notify_email_appointment) {
+              await mailer(
+                TemplateEmail(client.name, response.start_url),
+                client.settings.jsonSettings.email || client.email
+              );
+            }
             return res.status(200).json(newAppoiment._id);
           })
           .catch(function (err) {
