@@ -26,8 +26,15 @@ const app = express();
 app.set("port", process.env.PORT || 4000);
 
 //middle
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://come-back-front.vercel.app/",
+];
+const options: cors.CorsOptions = {
+  origin: allowedOrigins,
+};
 app.use(morgan("dev"));
-app.use(cors({ credentials: true, origin: true }));
+app.use(cors(options));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(passport.initialize());
