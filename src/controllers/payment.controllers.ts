@@ -56,25 +56,21 @@ export const updatePayment = async (req: Request, res: Response) => {
   const token = req.headers.authorization || "";
   const auth: any = jwt.verify(token.replace("Bearer ", ""), config.JWTSecret);
 
-  if (auth.role === "admin") {
-    try {
-      const newPayment = await Payment.findById({ _id: id });
-      if (!newPayment) {
-        return res.status(400).json({ msg: "The Payment not exists" });
-      } else {
-        Payment.updateOne({ _id: id }, data)
-          .then(() => {
-            return res.status(200).json({ msg: "Data Updated" });
-          })
-          .catch((err) => {
-            return res.status(400).json({ msg: err });
-          });
-      }
-    } catch (error) {
-      return res.status(400).json({ msg: error.errors });
+  try {
+    const newPayment = await Payment.findById({ _id: id });
+    if (!newPayment) {
+      return res.status(400).json({ msg: "The Payment not exists" });
+    } else {
+      Payment.updateOne({ _id: id }, data)
+        .then(() => {
+          return res.status(200).json({ msg: "Data Updated" });
+        })
+        .catch((err) => {
+          return res.status(400).json({ msg: err });
+        });
     }
-  } else {
-    return res.status(400).json({ msg: "unauthorized" });
+  } catch (error) {
+    return res.status(400).json({ msg: error.errors });
   }
 };
 

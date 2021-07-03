@@ -3,6 +3,7 @@ import { model, Schema, Document } from "mongoose";
 export interface IPayment extends Document {
   card: string;
   cardout: string;
+  token: string;
   typepayment: string;
   paypal: string;
   status: "active" | "inactive";
@@ -15,6 +16,10 @@ const paymentSchema: Schema<IPayment> = new Schema(
       default: "",
     },
     cardout: {
+      type: String,
+      default: "",
+    },
+    token: {
       type: String,
       default: "",
     },
