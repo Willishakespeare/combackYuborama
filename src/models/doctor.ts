@@ -37,7 +37,10 @@ const doctorSchema: Schema<IDoctor> = new Schema(
       type: String,
       required: true,
     },
-
+    subscription: {
+      type: Object,
+      default: {},
+    },
     name: {
       type: String,
       required: true,
@@ -109,7 +112,7 @@ const doctorSchema: Schema<IDoctor> = new Schema(
       type: String,
       required: true,
     },
-    availability:[[{ type: Boolean, require: true }]],
+    availability: [[{ type: Boolean, require: true }]],
     skills: [
       {
         type: Schema.Types.ObjectId,
@@ -127,7 +130,7 @@ const doctorSchema: Schema<IDoctor> = new Schema(
         type: Schema.Types.ObjectId,
         ref: "diagnostic",
       },
-    ]
+    ],
   },
   { timestamps: true, minimize: false }
 );

@@ -72,6 +72,10 @@ const clientSchema: Schema<IClient> = new Schema(
       type: String,
       default: "",
     },
+    subscription: {
+      type: Object,
+      default: {},
+    },
     medicalid: {
       type: String,
       default: "",

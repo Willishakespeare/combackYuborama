@@ -39,7 +39,8 @@
     "request-promise": "^4.2.6",
     "swagger-jsdoc": "^7.0.0-rc.2",
     "swagger-ui-express": "^4.1.6",
-    "tsoa": "^3.5.2"
+    "tsoa": "^3.5.2",
+    "web-push": "^3.4.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -55,6 +56,7 @@
     "@types/request-promise": "^4.1.47",
     "@types/swagger-jsdoc": "^6.0.0",
     "@types/swagger-ui-express": "^4.1.2",
+    "@types/web-push": "^3.3.2",
     "concurrently": "^5.3.0",
     "tsc-watch": "^4.2.9",
     "tsconfig-paths": "^3.9.0",

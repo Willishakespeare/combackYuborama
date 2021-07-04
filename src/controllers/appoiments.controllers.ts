@@ -8,6 +8,12 @@ import config from "../config/config";
 import nodemailer from "nodemailer";
 import TemplateEmail from "./emailApoiments";
 import rp from "request-promise";
+import webpush from "web-push";
+
+const public_key =
+  "BFHUzJTDRFwwmWBEUxRXClwc3ZJgTKqU_Twzf3CpJHlNN7U3jW7k5NA8_JcKbsfTPN9nVL8o-IrXU4V1JuVwM_w";
+
+const private_key = "kRud_15IMgWXX5yPbkxEh6gFWhiDQt8J86H-pXBj7sk";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -142,6 +148,36 @@ export const insertAppoiment = async (req: Request, res: Response) => {
               { $push: { appoiments: newAppoiment._id } }
             );
             newAppoiment.save();
+
+            try {
+              const payload = JSON.stringify({
+                type: "appoiment",
+                title: "Hi You Have A New Appoiment",
+                message: "Enter your inbox and check your new emails",
+              });
+
+              webpush.setVapidDetails(
+                "mailto:test@comeback.com",
+                public_key,
+                private_key
+              );
+
+              if (
+                client.subscription &&
+                client.settings.jsonSettings.notify_appointment
+              ) {
+                await webpush.sendNotification(client.subscription, payload);
+              }
+              if (
+                doctor.subscription &&
+                doctor.settings.jsonSettings.notify_appointment
+              ) {
+                await webpush.sendNotification(doctor.subscription, payload);
+              }
+            } catch (error) {
+              console.log(error);
+            }
+
             if (doctor.settings.jsonSettings.notify_email_appointment) {
               await mailer(
                 TemplateEmail(doctor.name, response.start_url),
@@ -157,6 +193,8 @@ export const insertAppoiment = async (req: Request, res: Response) => {
             return res.status(200).json(newAppoiment._id);
           })
           .catch(function (err) {
+            console.log(err);
+
             res.status(400).json({ msg: err });
           });
       } else {

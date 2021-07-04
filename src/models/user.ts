@@ -1,5 +1,6 @@
 import { model, Schema, Document, ObjectId } from "mongoose";
 export interface IUser extends Document {
+  subscription: {};
   username: string;
   email: string;
   password: string;

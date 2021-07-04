@@ -18,6 +18,7 @@ import paymentRoutes from "./routes/payment.routes";
 import skillsRoutes from "./routes/skills.routes";
 import settingsRoutes from "./routes/settings.routes";
 import observationRoutes from "./routes/observation.routes";
+import webpushRoutes from "./routes/webpush.routes";
 
 //init
 const app = express();
@@ -50,6 +51,7 @@ app.use(feedbackRoutes);
 app.use(diagnosicRoutes);
 app.use(observationRoutes);
 app.use(settingsRoutes);
+app.use(webpushRoutes);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
