@@ -18,7 +18,7 @@ export const insertCondition = async (req: Request, res: Response) => {
       const newCondition = new Condition(req.body);
       await Client.updateOne({ _id: userid }, { $push: { condition: newCondition._id } });
       await newCondition.save();
-      
+
       return res.status(200).json({ msg: "Condition registered" });
     } else {
       return res.status(400).json({ msg: "not client available" });
@@ -60,27 +60,34 @@ export const updateCondition = async (req: Request, res: Response) => {
 };
 
 export const deleteCondition = async (req: Request, res: Response) => {
-  const { id } = req.body;
-  if (!id) {
+  const { id, userid } = req.body;
+  if (!id || !userid) {
     return res.status(400).json({ msg: "send all data please" });
   }
-
   const token = req.headers.authorization || "";
   const auth: any = jwt.verify(token.replace("Bearer ", ""), config.JWTSecret);
-
   if (auth.role === "admin") {
     try {
-      const newCondition = await Condition.findById({ _id: id });
-      if (!newCondition) {
-        return res.status(400).json({ msg: "The Condition not exists" });
+      const client = await Client.findOne({
+        _id: userid,
+      });
+      console.log(client);
+      if (client) {
+        const newCondition = await Condition.findById({ _id: id });
+        if (!newCondition) {
+          return res.status(400).json({ msg: "The Condition not exists" });
+        } else {
+          await Client.updateOne({ _id: userid }, { $pull: { condition: newCondition._id } });
+          Condition.deleteOne({ _id: id })
+            .then(() => {
+              return res.status(200).json({ msg: "Data Deleted" });
+            })
+            .catch((err) => {
+              return res.status(400).json({ msg: err });
+            });
+        }
       } else {
-        Condition.deleteOne({ _id: id })
-          .then(() => {
-            return res.status(200).json({ msg: "Data Deleted" });
-          })
-          .catch((err) => {
-            return res.status(400).json({ msg: err });
-          });
+        return res.status(400).json({ msg: "not client available" });
       }
     } catch (error) {
       return res.status(400).json({ msg: error.errors });
