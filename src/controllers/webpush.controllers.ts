@@ -32,7 +32,7 @@ export const subscription = async (req: Request, res: Response) => {
     } catch (error) {
       console.log(error);
     }
-    return res.status(200).json({ msg: "Subcribed" });
+    return res.status(200).json(subscription);
   }
   if (Doctorget) {
     await Doctor.updateOne({ _id: id }, { subscription });
@@ -53,7 +53,7 @@ export const subscription = async (req: Request, res: Response) => {
     } catch (error) {
       console.log(error);
     }
-    return res.status(200).json({ msg: "Subcribed" });
+    return res.status(200).json(subscription);
   } else {
     return res.status(400).json();
   }
