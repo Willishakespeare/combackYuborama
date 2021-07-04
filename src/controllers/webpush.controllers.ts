@@ -38,7 +38,7 @@ export const subscription = async (req: Request, res: Response) => {
     await Doctor.updateOne({ _id: id }, { subscription });
     try {
       const payload = JSON.stringify({
-        type: "appoiment",
+        type: "init",
         title: "Hi You Have A New Appoiment",
         message: "Enter your inbox and check your new emails",
       });
