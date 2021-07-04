@@ -5,6 +5,7 @@ import {
   getAppoiments,
   getAppoimentById,
   deleteAppoiment,
+  availablehours,
 } from "../controllers/appoiments.controllers";
 const router = Router();
 import passport from "passport";
@@ -33,6 +34,11 @@ router.delete(
   "/appoiments",
   passport.authenticate("jwt", { session: false }),
   deleteAppoiment
+);
+router.post(
+  "/availablehours",
+  passport.authenticate("jwt", { session: false }),
+  availablehours
 );
 
 export default router;
