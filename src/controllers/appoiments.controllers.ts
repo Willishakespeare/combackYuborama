@@ -9,7 +9,6 @@ import nodemailer from "nodemailer";
 import TemplateEmail from "./emailApoiments";
 import rp from "request-promise";
 import webpush from "web-push";
-import { type } from "os";
 
 const public_key =
   "BFHUzJTDRFwwmWBEUxRXClwc3ZJgTKqU_Twzf3CpJHlNN7U3jW7k5NA8_JcKbsfTPN9nVL8o-IrXU4V1JuVwM_w";
@@ -347,42 +346,52 @@ export const availablehours = async (req: Request, res: Response) => {
     return res.status(400).json({ msg: "send all data please" });
   }
   try {
-    const doctor = await Doctor.findById({ _id: iddoctor })
+    const doctor = await Doctor.findById({ _id: iddoctor });
     if (!doctor) {
       return res.status(400).json({ msg: "el doctor no existe" });
     } else {
-      type newHoursType = {
-        hours:String,
-        value:String
-      }
-      let newhours: newHoursType[]=[]
       const newdate = new Date(date);
-      // console.log(newdate);
-      // console.log(newdate.getDate());
-      // console.log(newdate.getMonth() + 1);
-      // console.log(newdate.getFullYear());
-      // console.log(newdate.getDay());
-      let hours = ["7:00-8:00", "8:00-9:00", "9:00-10:00", "10:00-11:00", "11:00-12:00", "12:00-1:00", "1:00-2:00", "2:00-3:00", "3:00-4:00", "4:00-5:00", "6:00-7:00", "7:00-8:00", "8:00-9:00", "9:00-10:00"]
-      let values = ["7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "18:00", "19:00", "20:00", "21:00"]
-      const availablehoursDayDoctor = doctor.availability[newdate.getDay() == 0 ? 6 : newdate.getDay() - 1]
-      const appoiments = await Appoiment.find({ day: newdate.getDate(), month: newdate.getMonth() + 1, year: newdate.getFullYear(), status: "incomplete", doctorid: doctor._id })
-      availablehoursDayDoctor.filter((element, index) => {
-        if (element == true) {
-          newhours.push({ "hours": hours[index], "value": values[index] })
-        }
-      })
-      // console.log("ocupados");
-      // appoiments.map((e)=>{
-      //   console.log("hours:",e.hours);
-      // })
-      // console.log("disponibilidad del doctor por semana",doctor.availability);
-      // console.log("disponibilidad del doctor por dia",availablehoursDayDoctor);
-      // console.log("horarios del doctor por dia", newhours);
-      const newhoursS = newhours.filter(hour => !appoiments.some(appoiment => appoiment.hours == hour.value));
-      console.log("horarios validos", newhoursS)  
-      return res.status(400).json({ availablehoursDayDoctor: newhours });
+
+      let Days = [
+        { hours: "7:00-8:00", values: "7:00" },
+        { hours: "8:00-9:00", values: "8:00" },
+        { hours: "9:00-10:00", values: "9:00" },
+        { hours: "10:00-11:00", values: "10:00" },
+        { hours: "11:00-12:00", values: "11:00" },
+        { hours: "12:00-1:00", values: "12:00" },
+        { hours: "1:00-2:00", values: "13:00" },
+        { hours: "2:00-3:00", values: "14:00" },
+        { hours: "3:00-4:00", values: "15:00" },
+        { hours: "4:00-5:00", values: "16:00" },
+        { hours: "6:00-7:00", values: "18:00" },
+        { hours: "7:00-8:00", values: "19:00" },
+        { hours: "8:00-9:00", values: "20:00" },
+        { hours: "9:00-10:00", values: "21:00" },
+      ];
+
+      const getAppoiments = await Appoiment.find({
+        day: newdate.getDate(),
+        month: newdate.getMonth() + 1,
+        year: newdate.getFullYear(),
+        status: "incomplete",
+        doctorid: doctor._id,
+      });
+      const availablehoursDayDoctor = doctor.availability[
+        newdate.getDay() == 0 ? 6 : newdate.getDay() - 1
+      ]
+        .map((element, index) => (element === true ? index : -1))
+        .filter((e) => e !== -1)
+        .map((e2) => ({ hours: Days[e2].hours, value: Days[e2].values }))
+        .filter(
+          (hour) =>
+            !getAppoiments.some((appoiment) => appoiment.hours == hour.value)
+        );
+
+      return res
+        .status(200)
+        .json({ availablehoursDayDoctor: availablehoursDayDoctor });
     }
   } catch (error) {
     return res.status(400).json({ msg: error.errors });
   }
-}
+};
