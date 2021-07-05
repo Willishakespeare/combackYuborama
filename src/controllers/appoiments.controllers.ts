@@ -353,20 +353,20 @@ export const availablehours = async (req: Request, res: Response) => {
       const newdate = new Date(date);
 
       let Days = [
-        { hours: "7:00-8:00", values: "7:00" },
-        { hours: "8:00-9:00", values: "8:00" },
-        { hours: "9:00-10:00", values: "9:00" },
-        { hours: "10:00-11:00", values: "10:00" },
-        { hours: "11:00-12:00", values: "11:00" },
-        { hours: "12:00-1:00", values: "12:00" },
-        { hours: "1:00-2:00", values: "13:00" },
-        { hours: "2:00-3:00", values: "14:00" },
-        { hours: "3:00-4:00", values: "15:00" },
-        { hours: "4:00-5:00", values: "16:00" },
-        { hours: "6:00-7:00", values: "18:00" },
-        { hours: "7:00-8:00", values: "19:00" },
-        { hours: "8:00-9:00", values: "20:00" },
-        { hours: "9:00-10:00", values: "21:00" },
+        { hours: "7:00-8:00 AM", values: "7:00" },
+        { hours: "8:00-9:00 AM", values: "8:00" },
+        { hours: "9:00-10:00 AM", values: "9:00" },
+        { hours: "10:00-11:00 AM", values: "10:00" },
+        { hours: "11:00-12:00 AM", values: "11:00" },
+        { hours: "12:00-1:00 PM", values: "12:00" },
+        { hours: "1:00-2:00 PM", values: "13:00" },
+        { hours: "2:00-3:00 PM", values: "14:00" },
+        { hours: "3:00-4:00 PM", values: "15:00" },
+        { hours: "4:00-5:00 PM", values: "16:00" },
+        { hours: "6:00-7:00 PM", values: "18:00" },
+        { hours: "7:00-8:00 PM", values: "19:00" },
+        { hours: "8:00-9:00 PM", values: "20:00" },
+        { hours: "9:00-10:00 PM", values: "21:00" },
       ];
 
       const getAppoiments = await Appoiment.find({
