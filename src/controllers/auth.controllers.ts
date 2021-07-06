@@ -98,7 +98,7 @@ export const registerClient = async (req: Request, res: Response) => {
       });
       await mailer(
         TemplateEmail(
-          `http://localhost:3000/verify/${createTokenEmail(newClient._id)}`,
+          `https://come-back-front.vercel.app/verify/${createTokenEmail(newClient._id)}`,
           newClient.name
         ),
         newClient.email
