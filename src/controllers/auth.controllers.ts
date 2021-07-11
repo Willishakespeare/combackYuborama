@@ -98,7 +98,9 @@ export const registerClient = async (req: Request, res: Response) => {
       });
       await mailer(
         TemplateEmail(
-          `https://come-back-front.vercel.app/verify/${createTokenEmail(newClient._id)}`,
+          `https://come-back-front.vercel.app/verify/${createTokenEmail(
+            newClient._id
+          )}`,
           newClient.name
         ),
         newClient.email
@@ -160,7 +162,9 @@ export const registerDoctor = async (req: Request, res: Response) => {
 
   try {
     const doctor = await Doctor.findOne({ $or: [{ username }, { email }] });
-    const availability = Array.from({length:7},()=>Array.from({length:14},()=>false))
+    const availability = Array.from({ length: 7 }, () =>
+      Array.from({ length: 14 }, () => false)
+    );
     if (doctor) {
       return res.status(400).json({ msg: "The user already exists" });
     } else {
