@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import Payment, { IPayment } from "../models/payment";
 import Client from "../models/client";
 import Pack from "../models/pack";
+import PayTokenModel from "../models/paytoken";
 import config from "../config/config";
 
 export const pay = async (req: Request, res: Response) => {
@@ -147,5 +148,21 @@ export const getPaymentById = async (req: Request, res: Response) => {
     }
   } else {
     return res.status(400).json({ msg: "unauthorized" });
+  }
+};
+
+export const prePay = async (req: Request, res: Response) => {
+  const { data } = req.body;
+
+  if (data) {
+    const newToken = new PayTokenModel({
+      data: jwt.sign(data, config.JWTSecret, {
+        expiresIn: 86400,
+      }),
+    });
+
+    const getNewToken = await newToken.save();
+
+    res.status(200).json(getNewToken._id);
   }
 };

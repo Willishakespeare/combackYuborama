@@ -5,15 +5,12 @@ import {
   getPayments,
   getPaymentById,
   deletePayment,
+  prePay,
 } from "../controllers/payment.controllers";
 const router = Router();
 import passport from "passport";
 
-router.post(
-  "/pay",
-  passport.authenticate("jwt", { session: false }),
-  pay
-);
+router.post("/pay", passport.authenticate("jwt", { session: false }), pay);
 router.post(
   "/paymentById",
   passport.authenticate("jwt", { session: false }),
@@ -34,5 +31,6 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   deletePayment
 );
+router.post("/prePay", prePay);
 
 export default router;
