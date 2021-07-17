@@ -5,7 +5,7 @@ import Client from "../models/client";
 import Pack from "../models/pack";
 import PayTokenModel from "../models/paytoken";
 import config from "../config/config";
-
+import { insertAppoiment } from "./appoiments.controllers"
 export const pay = async (req: Request, res: Response) => {
   const { card, cardout, typepayment, paypal, idclient, namepack } = req.body;
   if (!typepayment || !idclient || !namepack) {
@@ -153,10 +153,10 @@ export const getPaymentById = async (req: Request, res: Response) => {
 
 export const prePay = async (req: Request, res: Response) => {
   const { data } = req.body;
-
   if (data) {
+    const info = Object.assign(data, { preci: "S80" });
     const newToken = new PayTokenModel({
-      data: jwt.sign(data, config.JWTSecret, {
+      data: jwt.sign(info, config.JWTSecret, {
         expiresIn: 86400,
       }),
     });
@@ -164,5 +164,77 @@ export const prePay = async (req: Request, res: Response) => {
     const getNewToken = await newToken.save();
 
     res.status(200).json(getNewToken._id);
+  }
+};
+
+//paymentpreci paymenttype 
+//horadepago idcliente iddoctor horaconsulta preciotipodepago tipodepago
+export const payAccepted = async (req: Request, res: Response) => {
+  const { idpay } = req.body;
+  if (!idpay) {
+    return res.status(200).json({ msg: "send all data" });
+  }
+  const payTokenModel = await PayTokenModel.findById(idpay)
+  if (!payTokenModel) {
+    return res.status(200).json({ msg: "payToken no exits" });
+  }
+  const data: any = jwt.decode(payTokenModel.data)
+  if (data) {
+    const client = await Client.findById({ _id: data.idclient }).select('name');
+    if (client) {
+      req.body = {
+        name: client.name,
+        hours: data.appoimenttime,
+        desc: "Appoiment Description",
+        details: "Appoiment Details",
+        day: data.day,
+        month: data.month,
+        year: data.year,
+        recomendation: "Appoiment Recomendation",
+        doctorid: data.iddoctor,
+        clientid: data.idclient
+      }
+      try {
+        insertAppoiment(req, res)
+      } catch (error) {
+        return res.status(200).send(error)
+      }
+      return res.status(200).json({ data: req.body });
+    }
+  }
+}
+
+export const getPay = async (req: Request, res: Response) => {
+  const { idpay } = req.body;
+  if (!idpay) {
+    return res.status(200).json({ msg: "send all data" });
+  }
+  const payTokenModel = await PayTokenModel.findById(idpay)
+  if (!payTokenModel) {
+    return res.status(200).json({ msg: "payToken no exits" });
+  }
+  return res.status(200).json({ data: jwt.decode(payTokenModel.data) });
+}
+
+export const updatePay = async (req: Request, res: Response) => {
+  const { id, data } = req.body;
+  if (data && id) {
+    const paytoken = await PayTokenModel.findById(id)
+    if (paytoken) {
+      PayTokenModel.updateOne({ _id: id }, {
+        data: jwt.sign(data, config.JWTSecret, {
+          expiresIn: 86400,
+        })
+      }).then(() => {
+        res.status(200).json({ msg: "Update payToken" });
+      })
+        .catch((error) => {
+          res.status(400).send(error);
+        });
+    } else {
+      return res.status(400).json({ msg: "id not exist" });
+    }
+  } else {
+    return res.status(400).json({ msg: "send all data please" });
   }
 };

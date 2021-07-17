@@ -6,6 +6,9 @@ import {
   getPaymentById,
   deletePayment,
   prePay,
+  payAccepted,
+  getPay,
+  updatePay,
 } from "../controllers/payment.controllers";
 const router = Router();
 import passport from "passport";
@@ -33,4 +36,21 @@ router.delete(
 );
 router.post("/prePay", prePay);
 
+router.post(
+  "/payaccepted",
+  passport.authenticate("jwt", { session: false }),
+  payAccepted
+);
+
+router.post(
+  "/getpay",
+  passport.authenticate("jwt", { session: false }),
+  getPay
+);
+
+router.put(
+  "/updatepay",
+  passport.authenticate("jwt", { session: false }),
+  updatePay
+);
 export default router;
