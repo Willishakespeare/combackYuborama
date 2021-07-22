@@ -98,10 +98,10 @@ export const registerClient = async (req: Request, res: Response) => {
       });
       await mailer(
         TemplateEmail(
-          `https://come-back-front.vercel.app/verify/${createTokenEmail(
+          `https://comeback-ts.com/verify/${createTokenEmail(
             newClient._id
           )}`,
-          newClient.name
+          newClient.name || newClient.username
         ),
         newClient.email
       );
