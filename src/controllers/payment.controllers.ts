@@ -167,8 +167,6 @@ export const prePay = async (req: Request, res: Response) => {
   }
 };
 
-//paymentpreci paymenttype 
-//horadepago idcliente iddoctor horaconsulta preciotipodepago tipodepago
 export const payAccepted = async (req: Request, res: Response) => {
   const { idpay } = req.body;
   if (!idpay) {
@@ -199,7 +197,6 @@ export const payAccepted = async (req: Request, res: Response) => {
       } catch (error) {
         return res.status(200).send(error)
       }
-      return res.status(200).json({ data: req.body });
     }
   }
 }
