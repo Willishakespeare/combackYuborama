@@ -181,7 +181,7 @@ export const payAccepted = async (req: Request, res: Response) => {
     const client = await Client.findById({ _id: data.idclient }).select('name');
     if (client) {
       req.body = {
-        name: client.name,
+        name: "New Appoiment",
         hours: data.appoimenttime,
         desc: "Appoiment Description",
         details: "Appoiment Details",
@@ -192,11 +192,16 @@ export const payAccepted = async (req: Request, res: Response) => {
         doctorid: data.iddoctor,
         clientid: data.idclient
       }
+      await Client.updateOne(
+        { _id: client.id },
+        { $push: { paymentdone: payTokenModel._id } }
+      );
       try {
-        insertAppoiment(req, res)
+         insertAppoiment(req, res)
       } catch (error) {
         return res.status(200).send(error)
       }
+      // return res.status(200).json({ msg: "paso" });
     }
   }
 }
@@ -235,3 +240,26 @@ export const updatePay = async (req: Request, res: Response) => {
     return res.status(400).json({ msg: "send all data please" });
   }
 };
+
+export const getPaymentDoneById = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  if (!id) {
+    return res.status(400).json({ msg: "send all data" });
+  }
+  const clientt = await Client.findById(id)
+  if (!clientt) {
+    return res.status(400).json({ msg: "client no exits" });
+  }
+  
+  const client = await Client.findById({ _id: id }).select('paymentdone')
+    .populate({
+      path: "paymentdone",
+      select: "-__v",
+    })
+  if (!client) {
+    return res.status(400).json({ msg: "client no exits" });
+  }
+  const decodedata = client.paymentdone.map((e:any)=>jwt.decode(e.data))
+  console.log(client);
+  return res.status(200).json({ decodedata: decodedata });
+}

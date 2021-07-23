@@ -9,6 +9,7 @@ import {
   payAccepted,
   getPay,
   updatePay,
+  getPaymentDoneById,
 } from "../controllers/payment.controllers";
 const router = Router();
 import passport from "passport";
@@ -52,5 +53,11 @@ router.put(
   "/updatepay",
   passport.authenticate("jwt", { session: false }),
   updatePay
+);
+
+router.post(
+  "/getpaymentsdonebyid",
+  passport.authenticate("jwt", { session: false }),
+  getPaymentDoneById
 );
 export default router;

@@ -9,6 +9,7 @@ export interface IClient extends Document, IUser {
   appoiments: [ObjectId];
   diagnostics: [ObjectId];
   observations: [ObjectId];
+  paymentdone: [Number];
 }
 
 const clientSchema: Schema<IClient> = new Schema(
@@ -120,6 +121,12 @@ const clientSchema: Schema<IClient> = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "observation",
+      },
+    ],
+    paymentdone: [
+      {
+        type: Number,
+        ref: "paytoken",
       },
     ],
   },
