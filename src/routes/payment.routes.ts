@@ -10,6 +10,7 @@ import {
   getPay,
   updatePay,
   getPaymentDoneById,
+  payAcceptedPackages,
 } from "../controllers/payment.controllers";
 const router = Router();
 import passport from "passport";
@@ -36,6 +37,7 @@ router.delete(
   deletePayment
 );
 router.post("/prePay", prePay);
+router.post("/payAcceptedPackages", payAcceptedPackages);
 
 router.post(
   "/payaccepted",
