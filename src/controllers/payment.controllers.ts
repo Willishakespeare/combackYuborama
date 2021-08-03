@@ -223,8 +223,11 @@ export const updatePay = async (req: Request, res: Response) => {
   if (data && id) {
     const paytoken = await PayTokenModel.findById(id)
     if (paytoken) {
-      PayTokenModel.updateOne({ _id: id }, {
-        data: jwt.sign(data, config.JWTSecret, {
+      let datac:any = jwt.decode(paytoken.data)
+      Object.keys(data).map(x=>datac[x] = data[x])
+      delete datac.exp
+      await PayTokenModel.updateOne({ _id: id }, {
+        data: jwt.sign(datac, config.JWTSecret, {
           expiresIn: 86400,
         })
       }).then(() => {
