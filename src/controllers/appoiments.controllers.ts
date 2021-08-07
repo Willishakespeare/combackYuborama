@@ -164,7 +164,7 @@ export const insertAppoiment = async (req: Request, res: Response) => {
               console.log("if try");
               if (
                 client.subscription &&
-                client.settings.jsonSettings.notify_appointment
+                client?.settings?.jsonSettings?.notify_appointment
               ) {
                 try {
                   await webpush.sendNotification(client.subscription, payload);
@@ -177,12 +177,12 @@ export const insertAppoiment = async (req: Request, res: Response) => {
 
               if (
                 doctor.subscription &&
-                doctor.settings.jsonSettings.notify_appointment
+                doctor?.settings?.jsonSettings?.notify_appointment
               ) {
                 await webpush.sendNotification(doctor.subscription, payload);
               }
             } catch (error) {
-              console.log("error");
+              console.log("error if");
               console.log(error);
             }
             console.log("if2");
@@ -196,11 +196,12 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                   year,
                   hours
                 ),
-                doctor.settings.jsonSettings.email || doctor.email
+                doctor?.settings?.jsonSettings?.email || doctor.email
               );
             }
             console.log("if");
-            if (client.settings.jsonSettings.notify_email_appointment) {
+            if (client?.settings?.jsonSettings?.notify_email_appointment) {
+              console.log("envio correo antes");
               await mailer(
                 TemplateEmail(
                   client.name,
@@ -212,14 +213,15 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                 ),
                 client.settings.jsonSettings.email || client.email
               );
+              console.log("envio correo despues");
             }
             console.log("mirame");
             return res.status(200).json(newAppoiment._id);
             console.log("mirame2");
           })
           .catch(function (err) {
-            console.log("error");
-            console.log(err);
+            // console.log("error");
+            // console.log(err);
 
             res.status(400).json({ msg: err });
           });

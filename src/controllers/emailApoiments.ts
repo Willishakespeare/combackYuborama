@@ -149,7 +149,9 @@ const Template = (username: string, url: string | undefined,day:string, month:st
                               <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="font-size: 14px; line-height: 160%;">Hola ${username},</p>
                                 <p style="font-size: 14px; line-height: 160%;">Has realizado una nueva cita para el ${day}/${month}/${year} a las ${hours}.</p>
-                                <p style="font-size: 14px; line-height: 160%;">Para confirmar tu cita pulsa  <a href="${url}" target="_blank" rel="noopener noreferrer">aqu&iacute;.</a><br />Si deseas agregar esta nueva cita a tu calendario personal pulsa <a href="#" target="_blank" rel="noopener noreferrer">aqu&iacute;.</a><br />Nos vemos pronto,<br />El Equipo de Come Back.<br />*Recuerda que solo podr&aacute;s cambiar
+                                <p style="font-size: 14px; line-height: 160%;">Para ingresar a tu cita pulsa <a href="${url}" target="_blank" rel="noopener noreferrer">aqu&iacute;.</a>
+                                  <!-- <br />Si deseas agregar esta nueva cita a tu calendario personal pulsa <a href="#" target="_blank" rel="noopener noreferrer">aqu&iacute;.</a> -->
+                                  <br />Nos vemos pronto,<br />El Equipo de Come Back.<br />*Recuerda que solo podr&aacute;s cambiar
                                   tu cita individual dentro del lapso de tiempo que le resta a tu paquete adquirido*<br />*Solo las citas que han sido compradas por fuera del paquete podr&aacute;n ser re-agendadas exitosamente*</p>
                               </div>
 
@@ -185,7 +187,9 @@ const Template = (username: string, url: string | undefined,day:string, month:st
 
                               <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="font-size: 14px; line-height: 160%;">Hello ${username},</p>
-                                <p style="font-size: 14px; line-height: 160%;">A new appointment has been made for ${day}/${month}/${year} at ${hours}.<br />To confirm your new appointment click <a href="${url}" target="_blank" rel="noopener noreferrer">here.</a><br />If you wish to add this new event to your personal calendar click <a href="#" target="_blank" rel="noopener noreferrer">here.</a><br />See you soon,<br />The Come Back Team.<br
+                                <p style="font-size: 14px; line-height: 160%;">A new appointment has been made for ${day}/${month}/${year} at ${hours}.<br />To join your new appointment click <a href="${url}" target="_blank" rel="noopener noreferrer">here.</a>
+                                  <!-- <br />If you wish to add this new event to your personal calendar click <a href="#" target="_blank" rel="noopener noreferrer">here.</a> -->
+                                  <br />See you soon,<br />The Come Back Team.<br
                                   />*Remember that you can only change your personal appointment within the time limit of the service acquired*<br />*Only the appointments that have been purchased outside of a time limited package can be rearranged successfully*</p>
                               </div>
 
