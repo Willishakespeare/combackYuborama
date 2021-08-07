@@ -167,12 +167,11 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                 client.settings.jsonSettings.notify_appointment
               ) {
                 try {
-                  await webpush.sendNotification(client.subscription, payload);  
+                  await webpush.sendNotification(client.subscription, payload);
                 } catch (error) {
                   console.log("error2");
                   console.log(error);
                 }
-                
               }
               console.log("if try2");
 
@@ -189,14 +188,28 @@ export const insertAppoiment = async (req: Request, res: Response) => {
             console.log("if2");
             if (doctor.settings.jsonSettings.notify_email_appointment) {
               await mailer(
-                TemplateEmail(doctor.name, response.start_url,day,month,year,hours),
+                TemplateEmail(
+                  doctor.name,
+                  response.start_url,
+                  day,
+                  month,
+                  year,
+                  hours
+                ),
                 doctor.settings.jsonSettings.email || doctor.email
               );
             }
             console.log("if");
             if (client.settings.jsonSettings.notify_email_appointment) {
               await mailer(
-                TemplateEmail(client.name, response.start_url,day,month,year,hours),
+                TemplateEmail(
+                  client.name,
+                  response.start_url,
+                  day,
+                  month,
+                  year,
+                  hours
+                ),
                 client.settings.jsonSettings.email || client.email
               );
             }
@@ -292,6 +305,10 @@ export const deleteAppoiment = async (req: Request, res: Response) => {
 export const getAppoiments = async (req: Request, res: Response) => {
   try {
     Appoiment.find()
+      .populate({
+        path: "feedback",
+        select: "-__v",
+      })
       .then((data) => {
         return res.status(200).json(data);
       })

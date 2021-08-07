@@ -38,30 +38,24 @@ export const updateFeedback = async (req: Request, res: Response) => {
   }
 
   const token = req.headers.authorization || "";
-  const auth: any = jwt.verify(token.replace("Bearer ", ""), config.JWTSecret);
-
-  if (auth.role === "admin") {
-    try {
-      const feedbackGet = await Feedback.findById({ _id: id });
-      if (!feedbackGet) {
-        return res.status(400).json({ msg: "The Feedback not exists" });
-      } else {
-        if (data.hour) {
-          data.hour = new Date(data.hour);
-        }
-        Feedback.updateOne({ _id: id }, data)
-          .then(() => {
-            return res.status(200).json({ msg: "Feedback Updated" });
-          })
-          .catch((err) => {
-            return res.status(400).json({ msg: err });
-          });
+  try {
+    const feedbackGet = await Feedback.findById({ _id: id });
+    if (!feedbackGet) {
+      return res.status(400).json({ msg: "The Feedback not exists" });
+    } else {
+      if (data.hour) {
+        data.hour = new Date(data.hour);
       }
-    } catch (error) {
-      return res.status(400).json({ msg: error.errors });
+      Feedback.updateOne({ _id: id }, data)
+        .then(() => {
+          return res.status(200).json({ msg: "Feedback Updated" });
+        })
+        .catch((err) => {
+          return res.status(400).json({ msg: err });
+        });
     }
-  } else {
-    return res.status(400).json({ msg: "unauthorized" });
+  } catch (error) {
+    return res.status(400).json({ msg: error.errors });
   }
 };
 
@@ -72,51 +66,42 @@ export const deleteFeedback = async (req: Request, res: Response) => {
   }
 
   const token = req.headers.authorization || "";
-  const auth: any = jwt.verify(token.replace("Bearer ", ""), config.JWTSecret);
-
-  if (auth.role === "admin") {
-    try {
-      const feedbackGet = await Feedback.findById({ _id: id });
-      if (!feedbackGet) {
-        return res.status(400).json({ msg: "The Feedback not exists" });
-      } else {
-        Feedback.deleteOne({ _id: id })
-          .then(() => {
-            Feedback.deleteOne({ _id: feedbackGet.feedback })
-              .then(() => {
-                return res.status(200).json({ msg: "Feedback Deleted" });
-              })
-              .catch((err) => {
-                return res.status(400).json({ msg: err });
-              });
-          })
-          .catch((err) => {
-            return res.status(400).json({ msg: err });
-          });
-      }
-    } catch (error) {
-      return res.status(400).json({ msg: error.errors });
+  try {
+    const feedbackGet = await Feedback.findById({ _id: id });
+    if (!feedbackGet) {
+      return res.status(400).json({ msg: "The Feedback not exists" });
+    } else {
+      Feedback.deleteOne({ _id: id })
+        .then(() => {
+          Feedback.deleteOne({ _id: feedbackGet.feedback })
+            .then(() => {
+              return res.status(200).json({ msg: "Feedback Deleted" });
+            })
+            .catch((err) => {
+              return res.status(400).json({ msg: err });
+            });
+        })
+        .catch((err) => {
+          return res.status(400).json({ msg: err });
+        });
     }
-  } else {
-    return res.status(400).json({ msg: "unauthorized" });
+  } catch (error) {
+    return res.status(400).json({ msg: error.errors });
   }
 };
 
 export const getFeedbacks = async (req: Request, res: Response) => {
   const token = req.headers.authorization || "";
-  const auth: any = jwt.verify(token.replace("Bearer ", ""), config.JWTSecret);
-  if (auth.role === "admin") {
-    try {
-      Feedback.find()
-        .then((data) => {
-          return res.status(200).json(data);
-        })
-        .catch((err) => {
-          return res.status(400).json({ msg: err });
-        });
-    } catch (error) {
-      return res.status(400).json({ msg: error.errors });
-    }
+  try {
+    Feedback.find()
+      .then((data) => {
+        return res.status(200).json(data);
+      })
+      .catch((err) => {
+        return res.status(400).json({ msg: err });
+      });
+  } catch (error) {
+    return res.status(400).json({ msg: error.errors });
   }
 };
 
@@ -127,20 +112,14 @@ export const getFeedbackById = async (req: Request, res: Response) => {
   }
 
   const token = req.headers.authorization || "";
-  const auth: any = jwt.verify(token.replace("Bearer ", ""), config.JWTSecret);
-
-  if (auth.role === "admin") {
-    try {
-      const feedbackGet = await Feedback.findById({ _id: id });
-      if (feedbackGet) {
-        return res.status(200).json(feedbackGet);
-      } else {
-        return res.status(400).json({ msg: "The Feedback not exists" });
-      }
-    } catch (error) {
-      return res.status(400).json({ msg: error.errors });
+  try {
+    const feedbackGet = await Feedback.findById({ _id: id });
+    if (feedbackGet) {
+      return res.status(200).json(feedbackGet);
+    } else {
+      return res.status(400).json({ msg: "The Feedback not exists" });
     }
-  } else {
-    return res.status(400).json({ msg: "unauthorized" });
+  } catch (error) {
+    return res.status(400).json({ msg: error.errors });
   }
 };
