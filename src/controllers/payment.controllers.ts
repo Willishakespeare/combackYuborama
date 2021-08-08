@@ -252,7 +252,7 @@ const Days = [
   { hours: "8:00-9:00 PM", values: "20:00" },
 ];
 
-const DaysS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const DaysS = ["sun", "Mon", "Tue", "Wed", "Thu", "Fri", "sat"];
 const DaysD: any = [
   [
     { hours: "8:00-9:00 AM", values: "8:00" },
@@ -291,6 +291,7 @@ const DaysD: any = [
 ];
 
 export const payAcceptedPackages = async (req: Request, res: Response) => {
+  console.log("e");
   const { idpay } = req.body;
   if (!idpay) {
     return res.status(200).json({ msg: "send all data" });
@@ -303,115 +304,144 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
   if (data) {
     try {
       const getDoctors = await Doctor.find();
+      const arrayOfDays = Array.from({ length: 7 }, (_, i) => {
+        const date = new Date("08/07/2021");
+        const first = date.getDate() + 1;
+        const day = new Date(date.setDate(first + i));
+        return { day: DaysS[day.getDay()], date: day };
+      }).filter((x) => x.day != "sun" && x.day != "sat");
 
-      const getAvailable = await Promise.all(
-        getDoctors.map(async (e) => {
-          function days(current: any) {
-            var week = new Array();
-            var first = current.getDate() + 1;
-            for (var i = 0; i < 14; i++) {
-              week.push(new Date(current.setDate(first++)));
-            }
-            return week;
-          }
-
-          var input = new Date();
-
-          var result = days(input);
-
-          const Weeks = await Promise.all(
-            result.map(async (d) => {
-              const newdate = new Date(d.toString());
-              const getAppoiments = await Appoiment.find({
-                day: newdate.getDate(),
-                month: newdate.getMonth() + 1,
-                year: newdate.getFullYear(),
-                status: "incomplete",
-                doctorid: e._id,
-              });
-
-              const availablehoursDayDoctor = e.availability[
-                newdate.getDay() == 0 ? 6 : newdate.getDay() - 1
-              ]
-                .map((element, index) => (element === true ? index : -1))
-                .filter((e) => e !== -1)
-                .map((e2) =>
-                  Days[e2]?.hours
-                    ? { hours: Days[e2].hours, value: Days[e2].values }
-                    : false
-                )
-                .filter((e) => e !== false)
-                .filter(
-                  (hour: any) =>
-                    !getAppoiments.some(
-                      (appoiment) => appoiment.hours == hour.value
-                    )
-                );
-              return {
-                day: newdate.toString().substring(0, 3),
-                hours: availablehoursDayDoctor,
-                date: newdate,
-              };
-            })
-          );
-
-          return { id: e.id, weeks: Weeks };
-        })
+      const avilesdaysdoctors = await Promise.all(
+        getDoctors.map(
+          async (doctor) =>
+            await Promise.all(
+              arrayOfDays.map(async (newdate) => {
+                const getAppoiments = await Appoiment.find({
+                  day: newdate.date.getDate(),
+                  month: newdate.date.getMonth() + 1,
+                  year: newdate.date.getFullYear(),
+                  status: "incomplete",
+                  doctorid: doctor._id,
+                });
+                const availablehoursDayDoctor = doctor.availability[
+                  newdate.date.getDay() == 0 ? 6 : newdate.date.getDay() - 1
+                ]
+                  .map((element, index) => (element === true ? index : -1))
+                  .filter((e) => e !== -1)
+                  .map((e2) => ({
+                    hours: Days[e2]?.hours,
+                    value: Days[e2]?.values,
+                  }))
+                  .filter(
+                    (hour) =>
+                      !getAppoiments.some(
+                        (appoiment) => appoiment.hours == hour.value
+                      )
+                  );
+                return availablehoursDayDoctor;
+              })
+            )
+        )
       );
+      console.log(avilesdaysdoctors);
+      // const getAvailable = await Promise.all(
+      //   getDoctors.map(async (e) => {
 
-      const getDaysSTemp = DaysS.map((e: any, i) => {
-        const getAVL = getAvailable.map((item) => {
-          const GA = item.weeks.find((week) => week.day === e);
+      //     var input = new Date();
+      //     const Weeks = await Promise.all(
+      //       result.map(async (d) => {
+      //         const newdate = new Date(d.toString());
+      //         const getAppoiments = await Appoiment.find({
+      //           day: newdate.getDate(),
+      //           month: newdate.getMonth() + 1,
+      //           year: newdate.getFullYear(),
+      //           status: "incomplete",
+      //           doctorid: e._id,
+      //         });
 
-          const temp = DaysD[i].map((itemD: any) =>
-            GA?.hours.find((eHour: any) => eHour.value === itemD.values)
-              ? GA?.hours.find((eHour: any) => eHour.value === itemD.values)
-              : false
-          );
+      //         const availablehoursDayDoctor = e.availability[
+      //           newdate.getDay() == 0 ? 6 : newdate.getDay() - 1
+      //         ]
+      //           .map((element, index) => (element === true ? index : -1))
+      //           .filter((e) => e !== -1)
+      //           .map((e2) =>
+      //             Days[e2]?.hours
+      //               ? { hours: Days[e2].hours, value: Days[e2].values }
+      //               : false
+      //           )
+      //           .filter((e) => e !== false)
+      //           .filter(
+      //             (hour: any) =>
+      //               !getAppoiments.some(
+      //                 (appoiment) => appoiment.hours == hour.value
+      //               )
+      //           );
+      //         return {
+      //           day: newdate.toString().substring(0, 3),
+      //           hours: availablehoursDayDoctor,
+      //           date: newdate,
+      //         };
+      //       })
+      //     );
 
-          const istrue = temp.find((e: any) => e === false);
+      //     return { id: e.id, weeks: Weeks };
+      //   })
+      // );
 
-          return istrue === undefined
-            ? { id: item.id, day: GA?.day, temp, date: GA?.date }
-            : false;
-        });
+      // const getDaysSTemp = DaysS.map((e: any, i) => {
+      //   const getAVL = getAvailable.map((item) => {
+      //     const GA = item.weeks.find((week) => week.day === e);
 
-        return getAVL.filter((getAVLItem: any) => getAVLItem !== false);
-      });
+      //     const temp = DaysD[i].map((itemD: any) =>
+      //       GA?.hours.find((eHour: any) => eHour.value === itemD.values)
+      //         ? GA?.hours.find((eHour: any) => eHour.value === itemD.values)
+      //         : false
+      //     );
 
-      const tempo = getDaysSTemp
-        .map((getDaysSTempItem, indexTempIdex) => {
-          return getDaysSTempItem.find(
-            (findTempItem: any) => findTempItem.day === DaysS[indexTempIdex]
-          );
-        })
-        .filter((e: any) => e !== undefined);
+      //     const istrue = temp.find((e: any) => e === false);
 
-      tempo.map(async (e: any) => {
-        e.temp.map(async (e2: any) => {
-          req.body = {
-            name: "New Appoiment",
-            hours: e2.value,
-            desc: "Appoiment Description",
-            details: "Appoiment Details",
-            day: e.date.getDate() + 3,
-            month: e.date.getMonth() + 1,
-            year: e.date.getFullYear(),
-            recomendation: "Appoiment Recomendation",
-            doctorid: e.id,
-            clientid: data.idclient,
-          };
-          await Client.updateOne(
-            { _id: data.idclient },
-            { $push: { paymentdone: payTokenModel._id } }
-          );
-          try {
-            insertAppoimentCreate(req);
-          } catch (error) {
-            return res.status(200).send(error);
-          }
-        });
-      });
+      //     return istrue === undefined
+      //       ? { id: item.id, day: GA?.day, temp, date: GA?.date }
+      //       : false;
+      //   });
+
+      //   return getAVL.filter((getAVLItem: any) => getAVLItem !== false);
+      // });
+
+      // const tempo = getDaysSTemp
+      //   .map((getDaysSTempItem, indexTempIdex) => {
+      //     return getDaysSTempItem.find(
+      //       (findTempItem: any) => findTempItem.day === DaysS[indexTempIdex]
+      //     );
+      //   })
+      //   .filter((e: any) => e !== undefined);
+
+      // tempo.map(async (e: any) => {
+      //   e.temp.map(async (e2: any) => {
+      //     req.body = {
+      //       name: "New Appoiment",
+      //       hours: e2.value,
+      //       desc: "Appoiment Description",
+      //       details: "Appoiment Details",
+      //       day: e.date.getDate() + 3,
+      //       month: e.date.getMonth() + 1,
+      //       year: e.date.getFullYear(),
+      //       recomendation: "Appoiment Recomendation",
+      //       doctorid: e.id,
+      //       clientid: data.idclient,
+      //     };
+      //     await Client.updateOne(
+      //       { _id: data.idclient },
+      //       { $push: { paymentdone: payTokenModel._id } }
+      //     );
+      //     try {
+      //       // insertAppoimentCreate(req);
+      //       return res.status(200).send('holi');
+      //     } catch (error) {
+      //       return res.status(200).send(error);
+      //     }
+      //   });
+      // });
       return res.status(200).json({ msg: `appoiments creadas` });
     } catch (error) {
       return res.status(400).json({ msg: "no hay doctores disponibles" });
@@ -436,9 +466,9 @@ export const updatePay = async (req: Request, res: Response) => {
   if (data && id) {
     const paytoken = await PayTokenModel.findById(id);
     if (paytoken) {
-      let datac:any = jwt.decode(paytoken.data)
-      Object.keys(data).map(x=>datac[x] = data[x])
-      delete datac.exp
+      let datac: any = jwt.decode(paytoken.data);
+      Object.keys(data).map((x) => (datac[x] = data[x]));
+      delete datac.exp;
       PayTokenModel.updateOne(
         { _id: id },
         {
