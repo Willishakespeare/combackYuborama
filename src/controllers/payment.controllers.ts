@@ -253,6 +253,7 @@ const Days = [
 ];
 
 const DaysS = ["sun", "Mon", "Tue", "Wed", "Thu", "Fri", "sat"];
+const DaysS2 = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 const DaysD: any = [
   [
     { hours: "8:00-9:00 AM", values: "8:00" },
@@ -312,38 +313,46 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
       }).filter((x) => x.day != "sun" && x.day != "sat");
 
       const avilesdaysdoctors = await Promise.all(
-        getDoctors.map(
-          async (doctor) =>
-            await Promise.all(
-              arrayOfDays.map(async (newdate) => {
-                const getAppoiments = await Appoiment.find({
-                  day: newdate.date.getDate(),
-                  month: newdate.date.getMonth() + 1,
-                  year: newdate.date.getFullYear(),
-                  status: "incomplete",
-                  doctorid: doctor._id,
-                });
-                const availablehoursDayDoctor = doctor.availability[
-                  newdate.date.getDay() == 0 ? 6 : newdate.date.getDay() - 1
-                ]
-                  .map((element, index) => (element === true ? index : -1))
-                  .filter((e) => e !== -1)
-                  .map((e2) => ({
-                    hours: Days[e2]?.hours,
-                    value: Days[e2]?.values,
-                  }))
-                  .filter(
-                    (hour) =>
-                      !getAppoiments.some(
-                        (appoiment) => appoiment.hours == hour.value
-                      )
-                  );
-                return availablehoursDayDoctor;
-              })
-            )
-        )
+        getDoctors.map(async (doctor) => ({
+          doctor: doctor.id,
+          days: await Promise.all(
+            arrayOfDays.map(async (newdate) => {
+              const getAppoiments = await Appoiment.find({
+                day: newdate.date.getDate(),
+                month: newdate.date.getMonth() + 1,
+                year: newdate.date.getFullYear(),
+                status: "incomplete",
+                doctorid: doctor._id,
+              });
+              const availablehoursDayDoctor = doctor.availability[
+                newdate.date.getDay() == 0 ? 6 : newdate.date.getDay() - 1
+              ]
+                .map((element, index) => (element === true ? index : -1))
+                .filter((e) => e !== -1 && e <= 5)
+                .map((e2) => ({
+                  hours: Days[e2]?.hours,
+                  value: Days[e2]?.values,
+                }))
+                .filter(
+                  (hour) =>
+                    !getAppoiments.some(
+                      (appoiment) => appoiment.hours == hour.value
+                    )
+                );
+              return availablehoursDayDoctor;
+            })
+          ),
+        }))
       );
-      console.log(avilesdaysdoctors);
+      const filteracilesdays = avilesdaysdoctors.map((e: any, i: any) => ({
+        doctor: e.doctor,
+        days: e.days.map((e2: any, i2: any) => ({
+          date: DaysS2[i2],
+          day: e2,
+        })),
+      }));
+
+      return res.status(200).json(filteracilesdays);
       // const getAvailable = await Promise.all(
       //   getDoctors.map(async (e) => {
 
@@ -444,7 +453,8 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
       // });
       return res.status(200).json({ msg: `appoiments creadas` });
     } catch (error) {
-      return res.status(400).json({ msg: "no hay doctores disponibles" });
+      console.log(error);
+      return res.status(400).json({ msg: error });
     }
   }
 };
