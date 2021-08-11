@@ -306,7 +306,7 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
     try {
       const getDoctors = await Doctor.find();
       const arrayOfDays = Array.from({ length: 7 }, (_, i) => {
-        const date = new Date("08/07/2021");
+        const date = new Date();
         const first = date.getDate() + 1;
         const day = new Date(date.setDate(first + i));
         return { day: DaysS[day.getDay()], date: day };
@@ -332,6 +332,7 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
                 .map((e2) => ({
                   hours: Days[e2]?.hours,
                   value: Days[e2]?.values,
+                  date: newdate,
                 }))
                 .filter(
                   (hour) =>
@@ -352,7 +353,6 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
         })),
       }));
 
-      return res.status(200).json(filteracilesdays);
       // const getAvailable = await Promise.all(
       //   getDoctors.map(async (e) => {
 
@@ -397,60 +397,53 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
       //   })
       // );
 
-      // const getDaysSTemp = DaysS.map((e: any, i) => {
-      //   const getAVL = getAvailable.map((item) => {
-      //     const GA = item.weeks.find((week) => week.day === e);
+      const getDaysSTemp = DaysS2.map((e: any, i) => {
+        const getAVL = filteracilesdays.map((item: any) => {
+          const GA = item.days.find((week: any) => week.date === e);
+          const temp = DaysD[i].map((itemD: any) =>
+            GA?.day.find((eHour: any) => eHour.value === itemD.values)
+              ? GA?.day.find((eHour: any) => eHour.value === itemD.values)
+              : false
+          );
+          const istrue = temp.find((e: any) => e === false);
 
-      //     const temp = DaysD[i].map((itemD: any) =>
-      //       GA?.hours.find((eHour: any) => eHour.value === itemD.values)
-      //         ? GA?.hours.find((eHour: any) => eHour.value === itemD.values)
-      //         : false
-      //     );
+          return istrue === undefined
+            ? { id: item.doctor, day: GA?.day, temp, date: GA?.date }
+            : false;
+        });
 
-      //     const istrue = temp.find((e: any) => e === false);
+        return getAVL.filter((getAVLItem: any) => getAVLItem !== false);
+      });
 
-      //     return istrue === undefined
-      //       ? { id: item.id, day: GA?.day, temp, date: GA?.date }
-      //       : false;
-      //   });
+      const tempo = getDaysSTemp
+        .map((getDaysSTempItem: any, indexTempIdex: any) => {
+          return getDaysSTempItem.find(
+            (findTempItem: any) => findTempItem.date === DaysS2[indexTempIdex]
+          );
+        })
+        .filter((e: any) => e !== undefined);
 
-      //   return getAVL.filter((getAVLItem: any) => getAVLItem !== false);
-      // });
-
-      // const tempo = getDaysSTemp
-      //   .map((getDaysSTempItem, indexTempIdex) => {
-      //     return getDaysSTempItem.find(
-      //       (findTempItem: any) => findTempItem.day === DaysS[indexTempIdex]
-      //     );
-      //   })
-      //   .filter((e: any) => e !== undefined);
-
-      // tempo.map(async (e: any) => {
-      //   e.temp.map(async (e2: any) => {
-      //     req.body = {
-      //       name: "New Appoiment",
-      //       hours: e2.value,
-      //       desc: "Appoiment Description",
-      //       details: "Appoiment Details",
-      //       day: e.date.getDate() + 3,
-      //       month: e.date.getMonth() + 1,
-      //       year: e.date.getFullYear(),
-      //       recomendation: "Appoiment Recomendation",
-      //       doctorid: e.id,
-      //       clientid: data.idclient,
-      //     };
-      //     await Client.updateOne(
-      //       { _id: data.idclient },
-      //       { $push: { paymentdone: payTokenModel._id } }
-      //     );
-      //     try {
-      //       // insertAppoimentCreate(req);
-      //       return res.status(200).send('holi');
-      //     } catch (error) {
-      //       return res.status(200).send(error);
-      //     }
-      //   });
-      // });
+      tempo.map(async (e: any) => {
+        e.temp.map(async (e2: any, index2: any) => {
+          try {
+            req.body = {
+              name: "New Appoiment",
+              hours: e2.value,
+              desc: "Appoiment Description",
+              details: "Appoiment Details",
+              day: e2.date.date.getDate(),
+              month: e2.date.date.getMonth(),
+              year: e2.date.date.getFullYear(),
+              recomendation: "Appoiment Recomendation",
+              doctorid: e.id,
+              clientid: data.idclient,
+            };
+            insertAppoimentCreate(req);
+          } catch (error) {
+            return res.status(200).send(error);
+          }
+        });
+      });
       return res.status(200).json({ msg: `appoiments creadas` });
     } catch (error) {
       console.log(error);
