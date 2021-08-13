@@ -149,20 +149,17 @@ export const insertAppoiment = async (req: Request, res: Response) => {
               { $push: { appoiments: newAppoiment._id } }
             );
             newAppoiment.save();
-            console.log("try");
             try {
               const payload = JSON.stringify({
                 type: "appoiment",
                 title: "Hi You Have A New Appoiment",
                 message: "Enter your inbox and check your new emails",
               });
-              console.log("web push");
               webpush.setVapidDetails(
                 "mailto:test@comeback.com",
                 public_key,
                 private_key
               );
-              console.log("if try");
               if (
                 client.subscription &&
                 client?.settings?.jsonSettings?.notify_appointment
@@ -170,12 +167,9 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                 try {
                   await webpush.sendNotification(client.subscription, payload);
                 } catch (error) {
-                  console.log("error2");
                   console.log(error);
                 }
               }
-              console.log("if try2");
-
               if (
                 doctor.subscription &&
                 doctor?.settings?.jsonSettings?.notify_appointment
@@ -183,10 +177,8 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                 await webpush.sendNotification(doctor.subscription, payload);
               }
             } catch (error) {
-              console.log("error if");
               console.log(error);
             }
-            console.log("if2");
             if (doctor.settings.jsonSettings.notify_email_appointment) {
               await mailer(
                 TemplateEmail(
@@ -200,9 +192,7 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                 doctor?.settings?.jsonSettings?.email || doctor.email
               );
             }
-            console.log("if");
-            if (client?.settings?.jsonSettings?.notify_email_appointment) {
-              console.log("envio correo antes");
+            if (client.email) {
               await mailer(
                 TemplateEmail(
                   client.name,
