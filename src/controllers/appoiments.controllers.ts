@@ -7,6 +7,7 @@ import Feedback from "../models/feedback";
 import config from "../config/config";
 import nodemailer from "nodemailer";
 import TemplateEmail from "./emailApoiments";
+import TemplateEmailApoimentUpdated from "./emailApoimentUpdated";
 import rp from "request-promise";
 import webpush from "web-push";
 
@@ -241,22 +242,40 @@ export const updateAppoiment = async (req: Request, res: Response) => {
   if (!id || !data) {
     return res.status(400).json({ msg: "send all data please" });
   }
-
-  const token = req.headers.authorization || "";
-  const auth: any = jwt.verify(token.replace("Bearer ", ""), config.JWTSecret);
-
   try {
-    const appoimentGet = await Appoiment.findById({ _id: id });
-    if (!appoimentGet) {
-      return res.status(400).json({ msg: "The Appoiment not exists" });
+    const appoiment:any = await Appoiment.findById({ _id: id })
+    if (!appoiment) {
+      return res.status(400).json({ msg: "The Appoiment not exists"});
     } else {
+      const appoimentGet:any = await Appoiment.findById({ _id: id }).populate("doctorid", "username").populate({
+        path: "clientid",
+        select: "username email",
+        populate: {
+          path: "settings",
+          select: "jsonSettings",
+        },
+      });
       if (data.hour) {
         data.hour = new Date(data.hour);
       }
-
       Appoiment.updateOne({ _id: id }, data)
-        .then(() => {
-          return res.status(200).json({ msg: "Appoiment Updated" });
+        .then(async () => {
+          const appoimentUpdated = await Appoiment.findById({ _id: id })
+          if (appoimentGet.clientid.email) {
+            await mailer(
+              TemplateEmailApoimentUpdated(
+                appoimentGet.clientid.username,
+                appoimentGet.urlzoom,
+                `${appoimentGet.day}/${appoimentGet.month}/${appoimentGet.year}`,
+                `${appoimentUpdated?.day}/${appoimentUpdated?.month}/${appoimentUpdated?.year}`,
+                appoimentGet.doctorid.username,
+                appoimentGet.hours,
+                appoimentUpdated?.hours||''
+              ),
+              appoimentGet.clientid.settings.jsonSettings.email || appoimentGet.clientid.email
+            );
+          }
+          return res.status(200).json({ msg: "Appoiment Updated"});
         })
         .catch((err) => {
           return res.status(400).json({ msg: err });
