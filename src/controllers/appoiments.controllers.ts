@@ -6,7 +6,7 @@ import Doctor from "../models/doctor";
 import Feedback from "../models/feedback";
 import config from "../config/config";
 import nodemailer from "nodemailer";
-import TemplateEmail from "./emailApoiments";
+import TemplateEmail, {TemplateDoctor} from "./emailApoiments";
 import TemplateEmailApoimentUpdated from "./emailApoimentUpdated";
 import rp from "request-promise";
 import webpush from "web-push";
@@ -181,8 +181,8 @@ export const insertAppoiment = async (req: Request, res: Response) => {
             }
             if (doctor.settings.jsonSettings.notify_email_appointment) {
               await mailer(
-                TemplateEmail(
-                  doctor.name,
+                TemplateDoctor(
+                  doctor.name || doctor.username,
                   response.start_url,
                   day,
                   month,
@@ -195,24 +195,21 @@ export const insertAppoiment = async (req: Request, res: Response) => {
             if (client.email) {
               await mailer(
                 TemplateEmail(
-                  client.name,
+                  client.name || client.username,
                   response.start_url,
                   day,
                   month,
                   year,
                   hours
                 ),
-                client.settings.jsonSettings.email || client.email
+                client.settings?.jsonSettings?.email || client.email
               );
-              console.log("envio correo despues");
             }
-            console.log("mirame");
             return res.status(200).json(newAppoiment._id);
-            console.log("mirame2");
           })
           .catch(function (err) {
             // console.log("error");
-            // console.log(err);
+            console.log(err);
 
             res.status(400).json({ msg: err });
           });
@@ -233,11 +230,11 @@ export const updateAppoiment = async (req: Request, res: Response) => {
     return res.status(400).json({ msg: "send all data please" });
   }
   try {
-    const appoiment:any = await Appoiment.findById({ _id: id })
+    const appoiment: any = await Appoiment.findById({ _id: id })
     if (!appoiment) {
-      return res.status(400).json({ msg: "The Appoiment not exists"});
+      return res.status(400).json({ msg: "The Appoiment not exists" });
     } else {
-      const appoimentGet:any = await Appoiment.findById({ _id: id }).populate("doctorid", "username").populate({
+      const appoimentGet: any = await Appoiment.findById({ _id: id }).populate("doctorid", "username").populate({
         path: "clientid",
         select: "username email",
         populate: {
@@ -254,18 +251,18 @@ export const updateAppoiment = async (req: Request, res: Response) => {
           if (appoimentGet.clientid.email) {
             await mailer(
               TemplateEmailApoimentUpdated(
-                appoimentGet.clientid.username,
+                appoimentGet.clientid.name || appoimentGet.clientid.username,
                 appoimentGet.urlzoom,
                 `${appoimentGet.day}/${appoimentGet.month}/${appoimentGet.year}`,
                 `${appoimentUpdated?.day}/${appoimentUpdated?.month}/${appoimentUpdated?.year}`,
-                appoimentGet.doctorid.username,
+                appoimentGet.doctorid.name || appoimentGet.doctorid.username,
                 appoimentGet.hours,
-                appoimentUpdated?.hours||''
+                appoimentUpdated?.hours || ''
               ),
-              appoimentGet.clientid.settings.jsonSettings.email || appoimentGet.clientid.email
+              appoimentGet.clientid.settings?.jsonSettings?.email || appoimentGet.clientid.email
             );
           }
-          return res.status(200).json({ msg: "Appoiment Updated"});
+          return res.status(200).json({ msg: "Appoiment Updated" });
         })
         .catch((err) => {
           return res.status(400).json({ msg: err });
