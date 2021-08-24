@@ -625,7 +625,6 @@ export const insertAppoimentCreate = async (req: any) => {
                 public_key,
                 private_key
               );
-              console.log("if try");
               if (
                 client.subscription &&
                 client.settings.jsonSettings.notify_appointment
@@ -633,11 +632,9 @@ export const insertAppoimentCreate = async (req: any) => {
                 try {
                   await webpush.sendNotification(client.subscription, payload);
                 } catch (error) {
-                  console.log("error2");
                   console.log(error);
                 }
               }
-              console.log("if try2");
 
               if (
                 doctor.subscription &&
@@ -646,10 +643,8 @@ export const insertAppoimentCreate = async (req: any) => {
                 await webpush.sendNotification(doctor.subscription, payload);
               }
             } catch (error) {
-              console.log("error");
               console.log(error);
             }
-            console.log("if2");
             if (doctor.settings.jsonSettings.notify_email_appointment) {
               await mailer(
                 TemplateEmail(
@@ -663,8 +658,7 @@ export const insertAppoimentCreate = async (req: any) => {
                 doctor.settings.jsonSettings.email || doctor.email
               );
             }
-            console.log("if");
-            if (client.settings.jsonSettings.notify_email_appointment) {
+            if (client.email) {
               await mailer(
                 TemplateEmail(
                   client.name,
@@ -674,7 +668,7 @@ export const insertAppoimentCreate = async (req: any) => {
                   year,
                   hours
                 ),
-                client.settings.jsonSettings.email || client.email
+                client.settings?.jsonSettings?.email || client.email
               );
             }
           })
