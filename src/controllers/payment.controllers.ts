@@ -432,7 +432,7 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
               desc: "Appoiment Description",
               details: "Appoiment Details",
               day: e2.date.date.getDate(),
-              month: e2.date.date.getMonth(),
+              month: e2.date.date.getMonth() + 1,
               year: e2.date.date.getFullYear(),
               recomendation: "Appoiment Recomendation",
               doctorid: e.id,
