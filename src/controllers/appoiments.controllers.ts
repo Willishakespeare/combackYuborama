@@ -6,10 +6,11 @@ import Doctor from "../models/doctor";
 import Feedback from "../models/feedback";
 import config from "../config/config";
 import nodemailer from "nodemailer";
-import TemplateEmail, {TemplateDoctor} from "./emailApoiments";
+import TemplateEmail, { TemplateDoctor } from "./emailApoiments";
 import TemplateEmailApoimentUpdated from "./emailApoimentUpdated";
 import rp from "request-promise";
 import webpush from "web-push";
+import path from "path";
 
 const public_key =
   "BFHUzJTDRFwwmWBEUxRXClwc3ZJgTKqU_Twzf3CpJHlNN7U3jW7k5NA8_JcKbsfTPN9nVL8o-IrXU4V1JuVwM_w";
@@ -234,9 +235,9 @@ export const updateAppoiment = async (req: Request, res: Response) => {
     if (!appoiment) {
       return res.status(400).json({ msg: "The Appoiment not exists" });
     } else {
-      const appoimentGet: any = await Appoiment.findById({ _id: id }).populate("doctorid", "username").populate({
+      const appoimentGet: any = await Appoiment.findById({ _id: id }).populate({ path: "doctorid", select: "username name" }).populate({
         path: "clientid",
-        select: "username email",
+        select: "username email name",
         populate: {
           path: "settings",
           select: "jsonSettings",
