@@ -26,7 +26,7 @@ export const addFeedback = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "The Appoiment not exists" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -54,7 +54,7 @@ export const updateFeedback = async (req: Request, res: Response) => {
           return res.status(400).json({ msg: err });
         });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -85,7 +85,7 @@ export const deleteFeedback = async (req: Request, res: Response) => {
           return res.status(400).json({ msg: err });
         });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -100,7 +100,7 @@ export const getFeedbacks = async (req: Request, res: Response) => {
       .catch((err) => {
         return res.status(400).json({ msg: err });
       });
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -119,7 +119,7 @@ export const getFeedbackById = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "The Feedback not exists" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };

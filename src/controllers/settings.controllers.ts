@@ -28,7 +28,7 @@ export const addSettings = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json("error");
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error });
   }
 };
@@ -52,7 +52,7 @@ export const updateSettings = async (req: Request, res: Response) => {
           return res.status(400).json({ msg: err });
         });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -80,7 +80,7 @@ export const deleteSettings = async (req: Request, res: Response) => {
             return res.status(400).json({ msg: err });
           });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -100,7 +100,7 @@ export const getSettings = async (req: Request, res: Response) => {
         .catch((err) => {
           return res.status(400).json({ msg: err });
         });
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -125,7 +125,7 @@ export const getSettingsById = async (req: Request, res: Response) => {
       } else {
         return res.status(400).json({ msg: "The Payment not exists" });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -146,7 +146,7 @@ export const getSettingsByUserId = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "The Payment not exists" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };

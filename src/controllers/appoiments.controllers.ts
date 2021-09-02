@@ -11,6 +11,62 @@ import TemplateEmailApoimentUpdated from "./emailApoimentUpdated";
 import rp from "request-promise";
 import webpush from "web-push";
 import path from "path";
+import { calendar_v3, google } from 'googleapis';
+import { OAuth2Client } from "google-auth-library";
+
+const oAuthClient = new OAuth2Client(
+  '531580369890-n6nn3ml1894mjeephca57cico3tonsgh.apps.googleusercontent.com',
+  'NkQp1HKov23s3ZkY_R59OSzr');
+
+oAuthClient.setCredentials({ refresh_token: '1//04GpQRhap_7umCgYIARAAGAQSNwF-L9IrtEmL1QTYS6EQywcNhpFWhzwaYd-LQo3lGDb1uvhK_RODYyOVhI5S25Vb5YIblSoVa-0'})
+
+const calendar = google.calendar({ version: 'v3', auth: oAuthClient })
+
+
+
+export let googleCalendarAppoiment = async(request: Request, response: Response) => {
+  const eventCalendar = {
+    summary: 'Cita con el Dr',
+    location: 'C. Dionisio Valera 5, Santo Domingo 10114',
+    description: 'Cita de prueba con el doctor',
+    start: {
+      dateTime: '2021-08-13T014:00:00-07:00',
+      timeZone: 'America/Los_Angeles',
+    },
+    end: {
+      dateTime: '2021-08-13T17:00:00-07:00',
+      timeZone: 'America/Los_Angeles',
+    },
+    // recurrence: [
+    //   'RRULE:FREQ=DAILY;COUNT=2'
+    // ],
+    attendees: [
+      {email: 'info@creaapps.com.do'},
+      {email: 'admin@volver.com.do'},
+      {email: 'marianomorenoj@gmail.com'},
+    ],
+    reminders: {
+      useDefault: false,
+      overrides: [
+        {method: 'email', minutes: 24 * 60},
+        {method: 'popup', minutes: 10},
+      ],
+    },
+  };
+
+  calendar.events.insert({
+    auth: oAuthClient,
+    calendarId: 'primary',
+  }, (err, event) => { 
+    if (err) {
+        console.log('error code');
+        return response.status(400).json({error:  true , err});
+      }
+      
+      console.log(event)
+      return response.status(200).json({error:  false , data: event});
+  });
+};
 
 const public_key =
   "BFHUzJTDRFwwmWBEUxRXClwc3ZJgTKqU_Twzf3CpJHlNN7U3jW7k5NA8_JcKbsfTPN9nVL8o-IrXU4V1JuVwM_w";
@@ -167,7 +223,7 @@ export const insertAppoiment = async (req: Request, res: Response) => {
               ) {
                 try {
                   await webpush.sendNotification(client.subscription, payload);
-                } catch (error) {
+                } catch (error: any) {
                   console.log(error);
                 }
               }
@@ -177,7 +233,7 @@ export const insertAppoiment = async (req: Request, res: Response) => {
               ) {
                 await webpush.sendNotification(doctor.subscription, payload);
               }
-            } catch (error) {
+            } catch (error: any) {
               console.log(error);
             }
             if (doctor.settings.jsonSettings.notify_email_appointment) {
@@ -220,7 +276,7 @@ export const insertAppoiment = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "not professional available" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error });
   }
 };
@@ -269,7 +325,7 @@ export const updateAppoiment = async (req: Request, res: Response) => {
           return res.status(400).json({ msg: err });
         });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -303,7 +359,7 @@ export const deleteAppoiment = async (req: Request, res: Response) => {
             return res.status(400).json({ msg: err });
           });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -324,7 +380,7 @@ export const getAppoiments = async (req: Request, res: Response) => {
       .catch((err) => {
         return res.status(400).json({ msg: err });
       });
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -374,7 +430,7 @@ export const getAppoimentById = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "The Appoiment not exists" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -430,7 +486,7 @@ export const availablehours = async (req: Request, res: Response) => {
         .status(200)
         .json({ availablehoursDayDoctor: availablehoursDayDoctor });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };

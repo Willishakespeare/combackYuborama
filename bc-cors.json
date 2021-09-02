@@ -1,0 +1,6 @@
+[{
+    "origin": ["https://comeback-ts.com"],
+    "method": ["*"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+}]

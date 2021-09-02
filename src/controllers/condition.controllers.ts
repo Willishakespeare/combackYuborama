@@ -23,7 +23,7 @@ export const insertCondition = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "not client available" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -51,7 +51,7 @@ export const updateCondition = async (req: Request, res: Response) => {
             return res.status(400).json({ msg: err });
           });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -89,7 +89,7 @@ export const deleteCondition = async (req: Request, res: Response) => {
       } else {
         return res.status(400).json({ msg: "not client available" });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -109,7 +109,7 @@ export const getConditions = async (req: Request, res: Response) => {
         .catch((err) => {
           return res.status(400).json({ msg: err });
         });
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -134,7 +134,7 @@ export const getConditionById = async (req: Request, res: Response) => {
       } else {
         return res.status(400).json({ msg: "The Condition not exists" });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -159,7 +159,7 @@ export const getConditionByUserId = async (req: Request, res: Response) => {
       } else {
         return res.status(400).json({ msg: "The user dont have Conditions" });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {

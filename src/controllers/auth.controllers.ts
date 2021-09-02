@@ -108,7 +108,7 @@ export const registerClient = async (req: Request, res: Response) => {
       await newClient.save();
       return res.status(200).json({ token: createTokenClient(newClient) });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error });
   }
 };
@@ -203,7 +203,7 @@ export const registerDoctor = async (req: Request, res: Response) => {
 
       return res.status(200).json({ token: createTokenDoctor(newDoctor) });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error });
   }
 };
@@ -238,7 +238,7 @@ export const login = async (req: Request, res: Response) => {
       }
       return res.status(400).json({ msg: "The credencial not match" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -271,7 +271,7 @@ export const verify = async (req: Request, res: Response) => {
     try {
       await Client.updateOne({ _id: id.token }, { verify: true });
       return res.status(200).json({ msg: true });
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json(error);
     }
   } else {

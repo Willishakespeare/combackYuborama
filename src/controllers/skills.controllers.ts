@@ -25,7 +25,7 @@ export const insertSkill = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "not professional available" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -53,7 +53,7 @@ export const updateSkill = async (req: Request, res: Response) => {
             return res.status(400).json({ msg: err });
           });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -83,7 +83,7 @@ export const deleteSkill = async (req: Request, res: Response) => {
           return res.status(400).json({ msg: err });
         });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -100,7 +100,7 @@ export const getSkills = async (req: Request, res: Response) => {
         .catch((err) => {
           return res.status(400).json({ msg: err });
         });
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -125,7 +125,7 @@ export const getSkillById = async (req: Request, res: Response) => {
       } else {
         return res.status(400).json({ msg: "The Payment not exists" });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -157,7 +157,7 @@ export const getSkillByProfessionalId = async (req: Request, res: Response) => {
       } else {
         return res.status(400).json({ msg: "not professional available" });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -171,7 +171,7 @@ const storage = new Storage({
   keyFilename: "./src/config/zasapi-firebase-adminsdk-i7j1w-4ec47952e8.json",
 });
 
-const bucket = storage.bucket("gs://zas-services.appspot.com");
+const bucket = storage.bucket("gs://comeback-ts-skills");
 
 export const upload = async (
   req: Request,
@@ -218,7 +218,7 @@ export const upload = async (
     });
 
     blobWriter.end(req.file.buffer);
-  } catch (error) {
-    return res.status(400).json({ msg: error.errors });
+  } catch (error: any) {
+    return res.status(400).json({ msg: error });
   }
 };

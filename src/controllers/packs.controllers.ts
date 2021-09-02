@@ -16,7 +16,7 @@ export const insertPack = async (req: Request, res: Response) => {
       await newPack.save();
       return res.status(200).json({ msg: "pack registered" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json(error);
   }
 };
@@ -40,7 +40,7 @@ export const updatePack = async (req: Request, res: Response) => {
           return res.status(400).json({ msg: err });
         });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -64,7 +64,7 @@ export const deletePack = async (req: Request, res: Response) => {
           return res.status(400).json({ msg: err });
         });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -78,7 +78,7 @@ export const getPacks = async (req: Request, res: Response) => {
       .catch((err) => {
         return res.status(400).json({ msg: err });
       });
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -96,7 +96,7 @@ export const getPackById = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "The pack not exists" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };

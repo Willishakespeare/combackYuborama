@@ -6,6 +6,7 @@ import {
   getAppoimentById,
   deleteAppoiment,
   availablehours,
+  googleCalendarAppoiment,
 } from "../controllers/appoiments.controllers";
 const router = Router();
 import passport from "passport";
@@ -40,5 +41,9 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   availablehours
 );
+
+
+router.post('/appoimentGoogle', googleCalendarAppoiment);
+
 
 export default router;

@@ -38,7 +38,7 @@ export const insertDiagnostic = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "not professional available" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -66,7 +66,7 @@ export const updateDiagnostic = async (req: Request, res: Response) => {
             return res.status(400).json({ msg: err });
           });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -97,7 +97,7 @@ export const deleteDiagnostic = async (req: Request, res: Response) => {
             return res.status(400).json({ msg: err });
           });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -114,7 +114,7 @@ export const getDiagnostics = async (req: Request, res: Response) => {
       .catch((err) => {
         return res.status(400).json({ msg: err });
       });
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -132,7 +132,7 @@ export const getDiagnosticById = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "The Diagnostic not exists" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };

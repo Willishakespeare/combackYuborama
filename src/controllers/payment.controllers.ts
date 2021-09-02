@@ -80,7 +80,7 @@ export const pay = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "not client available" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error });
   }
 };
@@ -107,7 +107,7 @@ export const updatePayment = async (req: Request, res: Response) => {
           return res.status(400).json({ msg: err });
         });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -135,7 +135,7 @@ export const deletePayment = async (req: Request, res: Response) => {
             return res.status(400).json({ msg: err });
           });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -155,7 +155,7 @@ export const getPayments = async (req: Request, res: Response) => {
         .catch((err) => {
           return res.status(400).json({ msg: err });
         });
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -180,7 +180,7 @@ export const getPaymentById = async (req: Request, res: Response) => {
       } else {
         return res.status(400).json({ msg: "The Payment not exists" });
       }
-    } catch (error) {
+    } catch (error: any) {
       return res.status(400).json({ msg: error.errors });
     }
   } else {
@@ -235,7 +235,7 @@ export const payAccepted = async (req: Request, res: Response) => {
       );
       try {
         insertAppoiment(req, res);
-      } catch (error) {
+      } catch (error: any) {
         return res.status(200).send(error);
       }
       // return res.status(200).json({ msg: "paso" });
@@ -439,13 +439,13 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
               clientid: data.idclient,
             };
             insertAppoimentCreate(req);
-          } catch (error) {
+          } catch (error: any) {
             return res.status(200).send(error);
           }
         });
       });
       return res.status(200).json({ msg: `appoiments creadas` });
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       return res.status(400).json({ msg: error });
     }
@@ -625,16 +625,19 @@ export const insertAppoimentCreate = async (req: any) => {
                 public_key,
                 private_key
               );
+              console.log("if try");
               if (
                 client.subscription &&
                 client.settings.jsonSettings.notify_appointment
               ) {
                 try {
                   await webpush.sendNotification(client.subscription, payload);
-                } catch (error) {
+                } catch (error: any) {
+                  console.log("error2");
                   console.log(error);
                 }
               }
+              console.log("if try2");
 
               if (
                 doctor.subscription &&
@@ -642,9 +645,11 @@ export const insertAppoimentCreate = async (req: any) => {
               ) {
                 await webpush.sendNotification(doctor.subscription, payload);
               }
-            } catch (error) {
+            } catch (error: any) {
+              console.log("error");
               console.log(error);
             }
+            console.log("if2");
             if (doctor.settings.jsonSettings.notify_email_appointment) {
               await mailer(
                 TemplateEmail(
@@ -658,7 +663,8 @@ export const insertAppoimentCreate = async (req: any) => {
                 doctor.settings.jsonSettings.email || doctor.email
               );
             }
-            if (client.email) {
+            console.log("if");
+            if (client.settings.jsonSettings.notify_email_appointment) {
               await mailer(
                 TemplateEmail(
                   client.name,
@@ -668,7 +674,7 @@ export const insertAppoimentCreate = async (req: any) => {
                   year,
                   hours
                 ),
-                client.settings?.jsonSettings?.email || client.email
+                client.settings.jsonSettings.email || client.email
               );
             }
           })
@@ -677,5 +683,5 @@ export const insertAppoimentCreate = async (req: any) => {
       }
     } else {
     }
-  } catch (error) {}
+  } catch (error: any) {}
 };

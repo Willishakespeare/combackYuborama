@@ -9,7 +9,7 @@ const storage = new Storage({
   keyFilename: "./src/config/zasapi-firebase-adminsdk-i7j1w-4ec47952e8.json",
 });
 
-const bucket = storage.bucket("gs://zas-services.appspot.com");
+const bucket = storage.bucket("gs://comeback-ts-users");
 
 export const uploadImage = async (
   req: Request,
@@ -34,8 +34,9 @@ export const uploadImage = async (
   blobWriter.on("error", (err: any) => next(err));
 
   blobWriter.on("finish", async () => {
-    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name
-      }/o/${encodeURI(blob.name)}?alt=media`;
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
+      bucket.name
+    }/o/${encodeURI(blob.name)}?alt=media`;
 
     const Clientget = await Client.findById({ _id: id });
     const Doctorget = await Doctor.findById({ _id: id });
@@ -77,14 +78,11 @@ export const updateUser = async (req: Request, res: Response) => {
 
   try {
     if (condition) {
-
-      condition.map(
-        async (e: ICondition) => {
-          const Conditionact = await Condition.findById({ _id: e._id })
-          console.log(Conditionact);
-          await Condition.updateOne({ _id: e._id }, { ...e });
-        }
-      )
+      condition.map(async (e: any) => {
+        const Conditionact = await Condition.findById({ _id: e._id });
+        console.log(Conditionact);
+        await Condition.updateOne({ _id: e._id }, { ...e });
+      });
     }
     const Clientget = await Client.findById({ _id: id });
     const Doctorget = await Doctor.findById({ _id: id });
@@ -98,7 +96,7 @@ export const updateUser = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json("error");
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error });
   }
 };
@@ -117,7 +115,7 @@ export const deleteUser = async (req: Request, res: Response) => {
       .catch((err) => {
         return res.status(400).json({ msg: err });
       });
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -140,7 +138,7 @@ export const getByRole = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "role not exist" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
@@ -204,8 +202,8 @@ export const getUserById = async (req: Request, res: Response) => {
     } else {
       return res.status(200).json(getClient || getDoctor);
     }
-  } catch (error) {
-    console.log(error)
+  } catch (error: any) {
+    console.log(error);
     return res.status(400).json({ msg: error.errors });
   }
 };

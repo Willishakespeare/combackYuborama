@@ -21,7 +21,7 @@ export const insertCondition = async (req: Request, res: Response) => {
     } else {
       return res.status(400).json({ msg: "not client available" });
     }
-  } catch (error) {
+  } catch (error: any) {
     return res.status(400).json({ msg: error.errors });
   }
 };
