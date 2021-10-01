@@ -550,11 +550,11 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
               hosturlzoom: e2.url,
             });
             await Client.updateOne(
-              { _id: e.id },
+              { _id: data.clientid },
               { $push: { appoiments: newAppoiment._id } }
             );
             await Doctor.updateOne(
-              { _id: data.clientid },
+              { _id: e.id },
               { $push: { appoiments: newAppoiment._id } }
             );
             newAppoiment.save();
