@@ -315,7 +315,7 @@ const DaysD: any = [
 ];
 
 export const payAcceptedPackages = async (req: Request, res: Response) => {
-  const { idpay } = req.body;
+  const { idpay, packid } = req.body;
   if (!idpay) {
     return res.status(200).json({ msg: "send all data" });
   }
@@ -323,7 +323,8 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
   if (!payTokenModel) {
     return res.status(200).json({ msg: "payToken no exits" });
   }
-  const data: any = jwt.decode(payTokenModel.data);
+  const datatemp: any = jwt.decode(payTokenModel.data);
+  const data: any = { ...datatemp, packid };
 
   // const aTuringRef = db.collection("PlanesSalud").doc("plan1");
 
