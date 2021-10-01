@@ -12,6 +12,29 @@ import Doctor from "../models/doctor";
 import webpush from "web-push";
 import TemplateEmail from "./emailApoiments";
 import { insertAppoiment } from "./appoiments.controllers";
+import Admin from "firebase-admin";
+import { calendar_v3, google } from "googleapis";
+import { OAuth2Client } from "google-auth-library";
+
+const oAuthClient = new OAuth2Client(
+  "531580369890-n6nn3ml1894mjeephca57cico3tonsgh.apps.googleusercontent.com",
+  "NkQp1HKov23s3ZkY_R59OSzr"
+);
+
+oAuthClient.setCredentials({
+  refresh_token:
+    "1//04GpQRhap_7umCgYIARAAGAQSNwF-L9IrtEmL1QTYS6EQywcNhpFWhzwaYd-LQo3lGDb1uvhK_RODYyOVhI5S25Vb5YIblSoVa-0",
+});
+
+const calendar = google.calendar({ version: "v3", auth: oAuthClient });
+
+Admin.initializeApp({
+  credential: Admin.credential.cert(
+    "./src/config/zasapi-firebase-adminsdk-i7j1w-4ec47952e8.json"
+  ),
+});
+
+const db = Admin.firestore();
 
 const public_key =
   "BFHUzJTDRFwwmWBEUxRXClwc3ZJgTKqU_Twzf3CpJHlNN7U3jW7k5NA8_JcKbsfTPN9nVL8o-IrXU4V1JuVwM_w";
@@ -253,7 +276,7 @@ const Days = [
 ];
 
 const DaysS = ["sun", "Mon", "Tue", "Wed", "Thu", "Fri", "sat"];
-const DaysS2 = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const DaysS2 = ["Fri", "Mon", "Tue", "Wed", "Thu"];
 const DaysD: any = [
   [
     { hours: "8:00-9:00 AM", values: "8:00" },
@@ -292,7 +315,6 @@ const DaysD: any = [
 ];
 
 export const payAcceptedPackages = async (req: Request, res: Response) => {
-  console.log("e");
   const { idpay } = req.body;
   if (!idpay) {
     return res.status(200).json({ msg: "send all data" });
@@ -302,10 +324,76 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
     return res.status(200).json({ msg: "payToken no exits" });
   }
   const data: any = jwt.decode(payTokenModel.data);
-  if (data) {
+
+  // const aTuringRef = db.collection("PlanesSalud").doc("plan1");
+
+  // await aTuringRef.set({
+  //   name: "plan1",
+  //   packid: data.packid,
+  //   packagesPlans: [
+  //     {
+  //       name: "Mon",
+  //       appoiments: [
+  //         "Reflexiones diarias",
+  //         "Terapias de grupo",
+  //         "Introducción al trabajo de 12 pasos",
+  //       ],
+  //     },
+  //     {
+  //       name: "Tue",
+  //       appoiments: ["Reflexiones diarias", "Psicoeducativas"],
+  //     },
+  //     {
+  //       name: "Wed",
+  //       appoiments: [
+  //         "Reflexiones diarias",
+  //         "Terapias de grupo",
+  //         "Terapia individual",
+  //       ],
+  //     },
+  //     {
+  //       name: "Thu",
+  //       appoiments: ["Reflexiones diarias", "Psicoeducativas"],
+  //     },
+  //     {
+  //       name: "Fri",
+  //       appoiments: [
+  //         "Reflexiones diarias",
+  //         "Terapias de grupo",
+  //         "Psicoeducativa familiar",
+  //       ],
+  //     },
+  //   ],
+  //   days: 7,
+  // });
+
+  const getPlanes = await db
+    .collection("Planes")
+    .get()
+    .then((query) => query.docs.map((doc) => doc.data()));
+
+  const Plan = await db
+    .collection("PlanesSalud")
+    .get()
+    .then((query) =>
+      query.docs
+        .map((doc) => doc.data())
+        .map((planGet: any) => ({
+          ...planGet,
+          packagesPlans: planGet.packagesPlans?.map((okl: any) => ({
+            ...okl,
+            appoiments: okl.appoiments.map((ukl: any) =>
+              getPlanes.find((gpf) => gpf.name === ukl)
+            ),
+          })),
+        }))
+        .find((getplanID) => getplanID.packid === data.packid)
+    );
+
+  if (data && Plan) {
     try {
       const getDoctors = await Doctor.find();
-      const arrayOfDays = Array.from({ length: 7 }, (_, i) => {
+      const arrayOfDays = Array.from({ length: Plan.days }, (_, i) => {
         const date = new Date();
         const first = date.getDate() + 1;
         const day = new Date(date.setDate(first + i));
@@ -345,6 +433,7 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
           ),
         }))
       );
+
       const filteracilesdays = avilesdaysdoctors.map((e: any, i: any) => ({
         doctor: e.doctor,
         days: e.days.map((e2: any, i2: any) => ({
@@ -397,23 +486,42 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
       //   })
       // );
 
-      const getDaysSTemp = DaysS2.map((e: any, i) => {
+      const getDaysSTemp: any = DaysS2.map((e: any, i) => {
         const getAVL = filteracilesdays.map((item: any) => {
           const GA = item.days.find((week: any) => week.date === e);
-          const temp = DaysD[i].map((itemD: any) =>
-            GA?.day.find((eHour: any) => eHour.value === itemD.values)
-              ? GA?.day.find((eHour: any) => eHour.value === itemD.values)
-              : false
+          const newtemp = Plan.packagesPlans.find(
+            (itemPlan: any) => itemPlan.name === e
           );
-          const istrue = temp.find((e: any) => e === false);
+          const temp = Days.map((itemD: any) => {
+            const getHour = newtemp.appoiments.find(
+              (temphour: any) => temphour.hour.values === itemD.values
+            );
+            const getHourGA = GA.day.find(
+              (temphourGA: any) => temphourGA.value === itemD.values
+            );
+            return getHour && getHourGA
+              ? {
+                  ...getHour,
+                  day: e,
+                  date: GA.day.find((fga: any) => fga.value === itemD.values)
+                    ?.date?.date,
+                }
+              : false;
+          });
+          const getistrue = temp.filter((e: any) => e !== false);
+          const istrue = getistrue.length === newtemp.appoiments.length;
 
-          return istrue === undefined
-            ? { id: item.doctor, day: GA?.day, temp, date: GA?.date }
+          return istrue === true
+            ? { id: item.doctor, temp: getistrue, date: GA?.date }
             : false;
         });
 
         return getAVL.filter((getAVLItem: any) => getAVLItem !== false);
       });
+
+      const newTempo = getDaysSTemp.map((lok: any, ilok: any) =>
+        lok.find((findlok: any) => findlok.date === DaysS2[ilok])
+      );
 
       const tempo = getDaysSTemp
         .map((getDaysSTempItem: any, indexTempIdex: any) => {
@@ -423,26 +531,47 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
         })
         .filter((e: any) => e !== undefined);
 
-      tempo.map(async (e: any) => {
-        e.temp.map(async (e2: any, index2: any) => {
-          try {
-            req.body = {
+      newTempo.map((e: any) => {
+        e.temp.map(async (e2: any) => {
+          if (e2.url) {
+            console.log(e2);
+            const newAppoiment = new Appoiment({
               name: "New Appoiment",
-              hours: e2.value,
+              hours: e2.hour.hours,
               desc: "Appoiment Description",
               details: "Appoiment Details",
-              day: e2.date.date.getDate(),
-              month: e2.date.date.getMonth() + 1,
-              year: e2.date.date.getFullYear(),
+              day: e2.date.getDate(),
+              month: e2.date.getMonth() + 1,
+              year: e2.date.getFullYear(),
               recomendation: "Appoiment Recomendation",
               doctorid: e.id,
               clientid: data.idclient,
-            };
-            insertAppoimentCreate(req);
-          } catch (error: any) {
-            return res.status(200).send(error);
+              urlzoom: e2.url,
+              hosturlzoom: e2.url,
+            });
+            await Client.updateOne(
+              { _id: e.id },
+              { $push: { appoiments: newAppoiment._id } }
+            );
+            await Doctor.updateOne(
+              { _id: data.clientid },
+              { $push: { appoiments: newAppoiment._id } }
+            );
+            newAppoiment.save();
+          } else {
           }
         });
+
+        // e.temp.map(async (e2: any, index2: any) => {
+        //   try {
+        //     req.body = {
+
+        //     };
+        //     insertAppoimentCreate(req);
+        //   } catch (error: any) {
+        //     return res.status(200).send(error);
+        //   }
+        // });
       });
       return res.status(200).json({ msg: `appoiments creadas` });
     } catch (error: any) {
