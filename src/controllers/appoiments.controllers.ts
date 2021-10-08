@@ -10,62 +10,120 @@ import TemplateEmail, { TemplateDoctor } from "./emailApoiments";
 import TemplateEmailApoimentUpdated from "./emailApoimentUpdated";
 import rp from "request-promise";
 import webpush from "web-push";
-import path from "path";
-import { calendar_v3, google } from 'googleapis';
+import { calendar_v3, google } from "googleapis";
 import { OAuth2Client } from "google-auth-library";
+import axios from "axios";
+
+const CREDENCIALS = {
+  type: "service_account",
+  project_id: "cobalt-logic-322816",
+  private_key_id: "9629e41b7e198ef36c585a39216ced02fb4ffd50",
+  private_key:
+    "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCoyKmqOmZJVzPS\nLfMrFHJLcjjSfjO/yWBDNiU8AHGu5l+4XyannarzO9Eu8osnzkd7iayJTfb9AVrc\nh8NkAVBDnkrjmSnuG+NUgezkDqPT7sj7ZJD3PUVYIAQcArwbYvtiJyNrp2IcXuSG\nXlEf6kyJw8avZtxxIILLZ3l61Xe4hrDv01UYJNG4djj0LUcBhVYpGJbd7S+lt0wG\nLx9nyK+FPY35Wp3+IadoYxR6bh52BHrthKpj68baF8B1rDR2kIvWFoOklf+1VC9A\nLcQ8YVDBThlD0fFbrDWr3Wyn/ruJcUOz7cpCLCVd4HmMQA487p41epAwwmMLG40S\n9tgjDzcXAgMBAAECggEAG7QcDSHayizzB4udPzPy8qlD5GDsk401LLMFd4zHHCMa\nEQQlLxv1BEmMMz2CU71LBF77n+nZIXwIcuwhyRdiGkcwGZ15QWj4blWJEYHJqC6o\ndIL0PHClIirXIdXdFE2x31F3QeNOekOlFN0ESc3GVFJ7GS0z/6mLbmGEkgHZzcKh\npjyGivzgl69LNocfZ5TdWjf46+Gk29QhiyDexM5QYJR3WJ+QpRTgIYezOxO33mpz\n7p8Rh8tV3JKF+tofSyhwuOfnMVcRv1DhI/4aJqDiNYXPSGXIqLP5jNWT4i35XpJE\nl+O6kpJc+DOJ9QQYbhh2Vlb6Cs75qmHodtLrI2H24QKBgQDTv/jf0keav88GxLkz\nWIQpGczMUZfGmvj5Rs4GbWWArjK8REW2nytmRnt82WRUIoPOcc+0tN4nKZQKqQDM\n0h7aOsW9nxVZxlve00KxA8GhhXoBIA/I83U70cXH9ybNOTIX4xKEhYTbYxbkI9C+\ngOEhEjs9LOe0JUmUn1kyrx6zJwKBgQDMDiB0YVFKL+RcSgEn2SqQJ5AQzgEA3Wha\ntsEgdWA6RAr8zeG7EQ6kjYBiU2itEx7CNZ7S0oQf3sT//oBHUUBEaUCixStH8bc2\n6qPFgHhx2QpoMViD4HQJa7AyucuK6wph27+ho7C/dY00Au7iZmF8sLKqkx7av/F1\no0x+lTUSkQKBgCdjm4kPFbDMo1cv+v95JMR8fyM2vlP8efns2OBLM0l3ngp1bL5m\n52zUCZ6U1dvsu7YIZ8nGp1iDnH1LKNHw+DpCGoyGbjNP+cD+bXZ+K2O/b42MCEOq\nPhGNmQv0hqxASng1DjnGmIsy6IwxuV/mm3pKaOidVNCm6wQRjEcoWj6bAoGAc7EK\nu5E1io9OtPiMYTBiTmrv5mc18GyXrt7w7ls+HKrZY+3CrtID8E393UGXFpHBnbDT\nBIqwuHUQUmfUCRtLCb53FBIf8OFd1DgCdIbbQwkgOmTH37VRdMnmk0v92BxcvZDe\nvGFXY6XdUgDbueb8HLr+AXH6S2IKH31fcGFePtECgYEAic5SCjoQ2XUD1Hih0FDP\nwzCE0nn2SdKGvICvdrXcyzgnsXQKfWxJ/AORi32rAVucy6KAA91Yxt/+s6UURC+x\nBy/VKH3TJ3vkGImTJUIN5Xx/hRatx3MfgmYo61y+/0MFK+Y4eiHAIBgt7sfvkO3N\nuI9dGV7kaI7vx2yEqLAEErE=\n-----END PRIVATE KEY-----\n",
+  client_email: "comeback@cobalt-logic-322816.iam.gserviceaccount.com",
+  client_id: "117476500292782711619",
+  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  token_uri: "https://oauth2.googleapis.com/token",
+  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  client_x509_cert_url:
+    "https://www.googleapis.com/robot/v1/metadata/x509/comeback%40cobalt-logic-322816.iam.gserviceaccount.com",
+};
+
+const CALENDAR_ID: any =
+  "c_9mfiftn3d6dk0cfmmabaob06kc@group.calendar.google.com";
+
+const SCOPES = [
+  "https://www.googleapis.com/auth/calendar",
+  "https://www.googleapis.com/auth/calendar.events",
+];
 
 const oAuthClient = new OAuth2Client(
-  '531580369890-n6nn3ml1894mjeephca57cico3tonsgh.apps.googleusercontent.com',
-  'NkQp1HKov23s3ZkY_R59OSzr');
+  "531580369890-n6nn3ml1894mjeephca57cico3tonsgh.apps.googleusercontent.com",
+  "NkQp1HKov23s3ZkY_R59OSzr"
+);
 
-oAuthClient.setCredentials({ refresh_token: '1//04GpQRhap_7umCgYIARAAGAQSNwF-L9IrtEmL1QTYS6EQywcNhpFWhzwaYd-LQo3lGDb1uvhK_RODYyOVhI5S25Vb5YIblSoVa-0'})
+const authUrl = oAuthClient.generateAuthUrl({
+  access_type: "offline",
+  scope: SCOPES,
+});
 
-const calendar = google.calendar({ version: 'v3', auth: oAuthClient })
+const calendar = google.calendar({ version: "v3", auth: oAuthClient });
 
+const auth = new google.auth.JWT(
+  CREDENCIALS.client_email,
+  undefined,
+  CREDENCIALS.private_key,
+  SCOPES,
+  "admin@volver.com.do",
+  "117476500292782711619"
+);
 
+const TIMEOFFSET = `+05:30`;
 
-export let googleCalendarAppoiment = async(request: Request, response: Response) => {
-  const eventCalendar = {
-    summary: 'Cita con el Dr',
-    location: 'C. Dionisio Valera 5, Santo Domingo 10114',
-    description: 'Cita de prueba con el doctor',
-    start: {
-      dateTime: '2021-08-13T014:00:00-07:00',
-      timeZone: 'America/Los_Angeles',
-    },
-    end: {
-      dateTime: '2021-08-13T17:00:00-07:00',
-      timeZone: 'America/Los_Angeles',
-    },
-    // recurrence: [
-    //   'RRULE:FREQ=DAILY;COUNT=2'
-    // ],
-    attendees: [
-      {email: 'info@creaapps.com.do'},
-      {email: 'admin@volver.com.do'},
-      {email: 'marianomorenoj@gmail.com'},
-    ],
-    reminders: {
-      useDefault: false,
-      overrides: [
-        {method: 'email', minutes: 24 * 60},
-        {method: 'popup', minutes: 10},
-      ],
-    },
-  };
+export let googleCalendarAppoiment = async (req: Request, res: Response) => {
+  axios
+    .post("https://www.googleapis.com/oauth2/v4/token", {
+      client_id: `531580369890-n6nn3ml1894mjeephca57cico3tonsgh.apps.googleusercontent.com`,
+      client_secret: `NkQp1HKov23s3ZkY_R59OSzr`,
+      grant_type: "refresh_token",
+      refresh_token: `1//06T4q6ii8P_AACgYIARAAGAYSNwF-L9Ir-8_sNbU7h4gK7mwO8jkFsANcPBSiy7QiJSCc09XLF0lhjI65nrnqGCpGkX16uS-N1cw`,
+    })
+    .then((response: any) => {
+      const { access_token } = response.data;
+      oAuthClient.setCredentials({
+        access_token: access_token,
+        refresh_token: `1//06T4q6ii8P_AACgYIARAAGAYSNwF-L9Ir-8_sNbU7h4gK7mwO8jkFsANcPBSiy7QiJSCc09XLF0lhjI65nrnqGCpGkX16uS-N1cw`,
+        scope:
+          "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar",
+        token_type: "Bearer",
+      });
+      var event = {
+        summary: "FIESTA EN LA CASA DE El JC",
+        location: "LA CASA DEL JC",
+        description: "A chance to hear more about Google's developer products.",
+        start: {
+          dateTime: "2021-10-07T08:00:00-07:00",
+          timeZone: "America/Los_Angeles",
+        },
+        end: {
+          dateTime: "2021-10-07T09:00:00-07:00",
+          timeZone: "America/Los_Angeles",
+        },
+        attendees: [
+          { email: "lpage@example.com" },
+          { email: "sbrin@example.com" },
+        ],
+        conferenceData: {
+          createRequest: {
+            conferenceSolutionKey: {
+              type: "hangoutsMeet",
+            },
+            requestId: "1",
+          },
+        },
+      };
+      var eventPatch = {
+        conferenceData: {
+          createRequest: { requestId: "7qxalsvy0e" },
+        },
+      };
+      calendar.events.insert(
+        {
+          auth: oAuthClient,
+          calendarId: "primary",
+          requestBody: event,
+          conferenceDataVersion: 1,
+        },
+        (err: any, event: any) => {
+          if (err) {
+            console.log("error code");
+            return res.status(400).json({ error: true, err });
+          }
 
-  calendar.events.insert({
-    auth: oAuthClient,
-    calendarId: 'primary',
-  }, (err, event) => { 
-    if (err) {
-        console.log('error code');
-        return response.status(400).json({error:  true , err});
-      }
-      
-      console.log(event)
-      return response.status(200).json({error:  false , data: event});
-  });
+          return res.status(200).json({ error: false, data: event.data });
+        }
+      );
+    });
 };
 
 const public_key =
@@ -156,119 +214,146 @@ export const insertAppoiment = async (req: Request, res: Response) => {
         ];
         const date = new Date(`${months[month]} ${day}, ${year} ${hours}:00`);
 
-        var options = {
-          method: "POST",
-          uri: "https://api.zoom.us/v2/users/Clinicaconductualvolver@gmail.com/meetings",
-          body: {
-            topic: "test create meeting",
-            type: 2,
-            start_time: date,
-            host_email: doctor.email,
-            agenda: "Hola",
-            settings: {
-              host_video: "true",
-              participant_video: "true",
-              join_before_host: "true",
-            },
-          },
-          auth: {
-            bearer: token,
-          },
-          headers: {
-            "User-Agent": "Zoom-api-Jwt-Request",
-            "content-type": "application/json",
-          },
-          json: true, //Parse the JSON string in the response
-        };
-
-        rp(options)
-          .then(async (response) => {
-            const newAppoiment = new Appoiment({
-              name,
-              hours,
-              desc,
-              details,
-              day,
-              month,
-              year,
-              urlzoom: response.join_url,
-              hosturlzoom: response.start_url,
-              recomendation,
-              doctorid,
-              clientid,
-            });
-            await Client.updateOne(
-              { _id: clientid },
-              { $push: { appoiments: newAppoiment._id } }
-            );
-            await Doctor.updateOne(
-              { _id: doctorid },
-              { $push: { appoiments: newAppoiment._id } }
-            );
-            newAppoiment.save();
-            try {
-              const payload = JSON.stringify({
-                type: "appoiment",
-                title: "Hi You Have A New Appoiment",
-                message: "Enter your inbox and check your new emails",
-              });
-              webpush.setVapidDetails(
-                "mailto:test@comeback.com",
-                public_key,
-                private_key
-              );
-              if (
-                client.subscription &&
-                client?.settings?.jsonSettings?.notify_appointment
-              ) {
-                try {
-                  await webpush.sendNotification(client.subscription, payload);
-                } catch (error: any) {
-                  console.log(error);
-                }
-              }
-              if (
-                doctor.subscription &&
-                doctor?.settings?.jsonSettings?.notify_appointment
-              ) {
-                await webpush.sendNotification(doctor.subscription, payload);
-              }
-            } catch (error: any) {
-              console.log(error);
-            }
-            if (doctor.settings.jsonSettings.notify_email_appointment) {
-              await mailer(
-                TemplateDoctor(
-                  doctor.name || doctor.username,
-                  response.start_url,
-                  day,
-                  month,
-                  year,
-                  hours
-                ),
-                doctor?.settings?.jsonSettings?.email || doctor.email
-              );
-            }
-            if (client.email) {
-              await mailer(
-                TemplateEmail(
-                  client.name || client.username,
-                  response.start_url,
-                  day,
-                  month,
-                  year,
-                  hours
-                ),
-                client.settings?.jsonSettings?.email || client.email
-              );
-            }
-            return res.status(200).json(newAppoiment._id);
+        axios
+          .post("https://www.googleapis.com/oauth2/v4/token", {
+            client_id: `531580369890-n6nn3ml1894mjeephca57cico3tonsgh.apps.googleusercontent.com`,
+            client_secret: `NkQp1HKov23s3ZkY_R59OSzr`,
+            grant_type: "refresh_token",
+            refresh_token: `1//06T4q6ii8P_AACgYIARAAGAYSNwF-L9Ir-8_sNbU7h4gK7mwO8jkFsANcPBSiy7QiJSCc09XLF0lhjI65nrnqGCpGkX16uS-N1cw`,
           })
-          .catch(function (err) {
-            // console.log("error");
-            console.log(err);
+          .then((response: any) => {
+            const { access_token } = response.data;
+            oAuthClient.setCredentials({
+              access_token: access_token,
+              refresh_token: `1//06T4q6ii8P_AACgYIARAAGAYSNwF-L9Ir-8_sNbU7h4gK7mwO8jkFsANcPBSiy7QiJSCc09XLF0lhjI65nrnqGCpGkX16uS-N1cw`,
+              scope:
+                "https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar",
+              token_type: "Bearer",
+            });
+            var event = {
+              summary: "New Doctor Appoiment",
+              location: "",
+              description: "",
+              start: {
+                dateTime: date.toISOString(),
+                timeZone: "America/Los_Angeles",
+              },
+              end: {
+                dateTime: date.toISOString(),
+                timeZone: "America/Los_Angeles",
+              },
+              attendees: [{ email: doctor.email }, { email: client.email }],
+              conferenceData: {
+                createRequest: {
+                  conferenceSolutionKey: {
+                    type: "hangoutsMeet",
+                  },
+                  requestId: "1",
+                },
+              },
+            };
 
-            res.status(400).json({ msg: err });
+            calendar.events.insert(
+              {
+                auth: oAuthClient,
+                calendarId: CALENDAR_ID,
+                requestBody: event,
+                conferenceDataVersion: 1,
+              },
+              async (err: any, event: any) => {
+                if (err) {
+                  console.log("error code");
+                  return res.status(400).json({ msg: err });
+                }
+
+                const newAppoiment = new Appoiment({
+                  name,
+                  hours,
+                  desc,
+                  details,
+                  day,
+                  month,
+                  year,
+                  urlzoom: event.data.hangoutLink,
+                  hosturlzoom: event.data.hangoutLink,
+                  recomendation,
+                  doctorid,
+                  clientid,
+                });
+                await Client.updateOne(
+                  { _id: clientid },
+                  { $push: { appoiments: newAppoiment._id } }
+                );
+                await Doctor.updateOne(
+                  { _id: doctorid },
+                  { $push: { appoiments: newAppoiment._id } }
+                );
+                newAppoiment.save();
+                // try {
+                //   const payload = JSON.stringify({
+                //     type: "appoiment",
+                //     title: "Hi You Have A New Appoiment",
+                //     message: "Enter your inbox and check your new emails",
+                //   });
+                //   webpush.setVapidDetails(
+                //     "mailto:test@comeback.com",
+                //     public_key,
+                //     private_key
+                //   );
+                //   if (
+                //     client.subscription &&
+                //     client?.settings?.jsonSettings?.notify_appointment
+                //   ) {
+                //     try {
+                //       await webpush.sendNotification(
+                //         client.subscription,
+                //         payload
+                //       );
+                //     } catch (error: any) {
+                //       console.log(error);
+                //     }
+                //   }
+                //   if (
+                //     doctor.subscription &&
+                //     doctor?.settings?.jsonSettings?.notify_appointment
+                //   ) {
+                //     await webpush.sendNotification(
+                //       doctor.subscription,
+                //       payload
+                //     );
+                //   }
+                // } catch (error: any) {
+                //   console.log(error);
+                // }
+                // if (doctor.settings.jsonSettings.notify_email_appointment) {
+                //   await mailer(
+                //     TemplateDoctor(
+                //       doctor.name || doctor.username,
+                //       response.start_url,
+                //       day,
+                //       month,
+                //       year,
+                //       hours
+                //     ),
+                //     doctor?.settings?.jsonSettings?.email || doctor.email
+                //   );
+                // }
+                // if (client.email) {
+                //   await mailer(
+                //     TemplateEmail(
+                //       client.name || client.username,
+                //       response.start_url,
+                //       day,
+                //       month,
+                //       year,
+                //       hours
+                //     ),
+                //     client.settings?.jsonSettings?.email || client.email
+                //   );
+                // }
+                return res.status(200).json(newAppoiment._id);
+              }
+            );
           });
       } else {
         return res.status(400).json({ msg: "not client available" });
@@ -287,24 +372,26 @@ export const updateAppoiment = async (req: Request, res: Response) => {
     return res.status(400).json({ msg: "send all data please" });
   }
   try {
-    const appoiment: any = await Appoiment.findById({ _id: id })
+    const appoiment: any = await Appoiment.findById({ _id: id });
     if (!appoiment) {
       return res.status(400).json({ msg: "The Appoiment not exists" });
     } else {
-      const appoimentGet: any = await Appoiment.findById({ _id: id }).populate({ path: "doctorid", select: "username name" }).populate({
-        path: "clientid",
-        select: "username email name",
-        populate: {
-          path: "settings",
-          select: "jsonSettings",
-        },
-      });
+      const appoimentGet: any = await Appoiment.findById({ _id: id })
+        .populate({ path: "doctorid", select: "username name" })
+        .populate({
+          path: "clientid",
+          select: "username email name",
+          populate: {
+            path: "settings",
+            select: "jsonSettings",
+          },
+        });
       if (data.hour) {
         data.hour = new Date(data.hour);
       }
       Appoiment.updateOne({ _id: id }, data)
         .then(async () => {
-          const appoimentUpdated = await Appoiment.findById({ _id: id })
+          const appoimentUpdated = await Appoiment.findById({ _id: id });
           if (appoimentGet.clientid.email) {
             await mailer(
               TemplateEmailApoimentUpdated(
@@ -314,9 +401,10 @@ export const updateAppoiment = async (req: Request, res: Response) => {
                 `${appoimentUpdated?.day}/${appoimentUpdated?.month}/${appoimentUpdated?.year}`,
                 appoimentGet.doctorid.name || appoimentGet.doctorid.username,
                 appoimentGet.hours,
-                appoimentUpdated?.hours || ''
+                appoimentUpdated?.hours || ""
               ),
-              appoimentGet.clientid.settings?.jsonSettings?.email || appoimentGet.clientid.email
+              appoimentGet.clientid.settings?.jsonSettings?.email ||
+                appoimentGet.clientid.email
             );
           }
           return res.status(200).json({ msg: "Appoiment Updated" });
