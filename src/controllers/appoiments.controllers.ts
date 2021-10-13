@@ -303,12 +303,12 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                     private_key
                   );
                   if (
-                    client.subscription &&
+                    client?.subscription &&
                     client?.settings?.jsonSettings?.notify_appointment
                   ) {
                     try {
                       await webpush.sendNotification(
-                        client.subscription,
+                        client?.subscription,
                         payload
                       );
                     } catch (error: any) {
@@ -316,11 +316,11 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                     }
                   }
                   if (
-                    doctor.subscription &&
+                    doctor?.subscription &&
                     doctor?.settings?.jsonSettings?.notify_appointment
                   ) {
                     await webpush.sendNotification(
-                      doctor.subscription,
+                      doctor?.subscription,
                       payload
                     );
                   }

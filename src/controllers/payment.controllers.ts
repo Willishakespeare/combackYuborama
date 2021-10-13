@@ -10,7 +10,7 @@ import nodemailer from "nodemailer";
 import Appoiment, { IAppoiments } from "../models/appoiment";
 import Doctor from "../models/doctor";
 import webpush from "web-push";
-import TemplateEmail from "./emailApoiments";
+import TemplateEmail, { TemplateDoctor } from "./emailApoiments";
 import { insertAppoiment } from "./appoiments.controllers";
 import Admin from "firebase-admin";
 import { calendar_v3, google } from "googleapis";
@@ -538,12 +538,12 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
             console.log(e2);
             const newAppoiment = new Appoiment({
               name: "New Appoiment",
-              hours: e2.hour.hours,
               desc: "Appoiment Description",
               details: "Appoiment Details",
               day: e2.date.getDate(),
               month: e2.date.getMonth() + 1,
               year: e2.date.getFullYear(),
+              hours: e2.hour.hours,
               recomendation: "Appoiment Recomendation",
               doctorid: e.id,
               clientid: data.idclient,
@@ -559,6 +559,67 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
               { $push: { appoiments: newAppoiment._id } }
             );
             newAppoiment.save();
+            const doctor: any = await Doctor.findOne({
+              _id: e.id,
+            }).populate("settings", "-__v");
+            const client: any = await Client.findOne({
+              _id: data.idclient,
+            }).populate("settings", "-__v");
+            try {
+              const payload = JSON.stringify({
+                type: "appoiment",
+                title: "Hi You Have A New Appoiment",
+                message: "Enter your inbox and check your new emails",
+              });
+              webpush.setVapidDetails(
+                "mailto:test@comeback.com",
+                public_key,
+                private_key
+              );
+              if (
+                client?.subscription &&
+                client?.settings?.jsonSettings?.notify_appointment
+              ) {
+                try {
+                  await webpush.sendNotification(client?.subscription, payload);
+                } catch (error: any) {
+                  console.log(error);
+                }
+              }
+              if (
+                doctor?.subscription &&
+                doctor?.settings?.jsonSettings?.notify_appointment
+              ) {
+                await webpush.sendNotification(doctor?.subscription, payload);
+              }
+            } catch (error: any) {
+            }
+            if (doctor?.settings.jsonSettings.notify_email_appointment) {
+              await mailer(
+                TemplateDoctor(
+                  doctor?.name || doctor?.username,
+                  e2.url,
+                  e2.date.getDate(),
+                  e2.date.getMonth() + 1,
+                  e2.date.getFullYear(),
+                  e2.hour.hours
+                ),
+                doctor?.settings?.jsonSettings?.email || doctor.email
+              );
+            }
+            if (client?.email) {
+              await mailer(
+                TemplateEmail(
+                  doctor.name || doctor.username,
+                  e2.url,
+                  e2.date.getDate(),
+                  e2.date.getMonth() + 1,
+                  e2.date.getFullYear(),
+                  e2.hour.hours
+                ),
+                client.settings?.jsonSettings?.email || client.email
+              );
+            }
           } else {
           }
         });
