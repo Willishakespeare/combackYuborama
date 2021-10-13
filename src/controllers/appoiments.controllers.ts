@@ -10,9 +10,11 @@ import TemplateEmail, { TemplateDoctor } from "./emailApoiments";
 import TemplateEmailApoimentUpdated from "./emailApoimentUpdated";
 import rp from "request-promise";
 import webpush from "web-push";
+
 import { calendar_v3, google } from "googleapis";
 import { OAuth2Client } from "google-auth-library";
 import axios from "axios";
+import mailgun from "mailgun-js";
 
 const CREDENCIALS = {
   type: "service_account",
@@ -136,18 +138,18 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "Stacklycode@gmail.com",
-    pass: "XHG|d%|/=Y,fc6*|q1d1",
+    user: "mailcomebackapp@gmail.com",
+    pass: "spdqtjbqfvcigyci",
   },
 });
 
 const mailer = (token: string, email: string) => {
   const messageSend = {
-    from: "comebackappemail@gmail.com",
+    from: "mailcomebackapp@gmail.com",
     to: email,
     subject: `New Appoiment`,
     html: token,
-    replyTo: "comebackappemail@gmail.com",
+    replyTo: "mailcomebackapp@gmail.com",
   };
   return new Promise((resolve, reject) => {
     transporter.sendMail(messageSend, (error, info) =>
@@ -221,7 +223,7 @@ export const insertAppoiment = async (req: Request, res: Response) => {
             grant_type: "refresh_token",
             refresh_token: `1//06T4q6ii8P_AACgYIARAAGAYSNwF-L9Ir-8_sNbU7h4gK7mwO8jkFsANcPBSiy7QiJSCc09XLF0lhjI65nrnqGCpGkX16uS-N1cw`,
           })
-          .then((response: any) => {
+          .then(async (response: any) => {
             const { access_token } = response.data;
             oAuthClient.setCredentials({
               access_token: access_token,
@@ -289,68 +291,68 @@ export const insertAppoiment = async (req: Request, res: Response) => {
                   { $push: { appoiments: newAppoiment._id } }
                 );
                 newAppoiment.save();
-                // try {
-                //   const payload = JSON.stringify({
-                //     type: "appoiment",
-                //     title: "Hi You Have A New Appoiment",
-                //     message: "Enter your inbox and check your new emails",
-                //   });
-                //   webpush.setVapidDetails(
-                //     "mailto:test@comeback.com",
-                //     public_key,
-                //     private_key
-                //   );
-                //   if (
-                //     client.subscription &&
-                //     client?.settings?.jsonSettings?.notify_appointment
-                //   ) {
-                //     try {
-                //       await webpush.sendNotification(
-                //         client.subscription,
-                //         payload
-                //       );
-                //     } catch (error: any) {
-                //       console.log(error);
-                //     }
-                //   }
-                //   if (
-                //     doctor.subscription &&
-                //     doctor?.settings?.jsonSettings?.notify_appointment
-                //   ) {
-                //     await webpush.sendNotification(
-                //       doctor.subscription,
-                //       payload
-                //     );
-                //   }
-                // } catch (error: any) {
-                //   console.log(error);
-                // }
-                // if (doctor.settings.jsonSettings.notify_email_appointment) {
-                //   await mailer(
-                //     TemplateDoctor(
-                //       doctor.name || doctor.username,
-                //       response.start_url,
-                //       day,
-                //       month,
-                //       year,
-                //       hours
-                //     ),
-                //     doctor?.settings?.jsonSettings?.email || doctor.email
-                //   );
-                // }
-                // if (client.email) {
-                //   await mailer(
-                //     TemplateEmail(
-                //       client.name || client.username,
-                //       response.start_url,
-                //       day,
-                //       month,
-                //       year,
-                //       hours
-                //     ),
-                //     client.settings?.jsonSettings?.email || client.email
-                //   );
-                // }
+                try {
+                  const payload = JSON.stringify({
+                    type: "appoiment",
+                    title: "Hi You Have A New Appoiment",
+                    message: "Enter your inbox and check your new emails",
+                  });
+                  webpush.setVapidDetails(
+                    "mailto:test@comeback.com",
+                    public_key,
+                    private_key
+                  );
+                  if (
+                    client.subscription &&
+                    client?.settings?.jsonSettings?.notify_appointment
+                  ) {
+                    try {
+                      await webpush.sendNotification(
+                        client.subscription,
+                        payload
+                      );
+                    } catch (error: any) {
+                      console.log(error);
+                    }
+                  }
+                  if (
+                    doctor.subscription &&
+                    doctor?.settings?.jsonSettings?.notify_appointment
+                  ) {
+                    await webpush.sendNotification(
+                      doctor.subscription,
+                      payload
+                    );
+                  }
+                } catch (error: any) {
+                  console.log(error);
+                }
+                if (doctor.settings.jsonSettings.notify_email_appointment) {
+                  await mailer(
+                    TemplateDoctor(
+                      doctor.name || doctor.username,
+                      response.start_url,
+                      day,
+                      month,
+                      year,
+                      hours
+                    ),
+                    doctor?.settings?.jsonSettings?.email || doctor.email
+                  );
+                }
+                if (client.email) {
+                  await mailer(
+                    TemplateEmail(
+                      client.name || client.username,
+                      response.start_url,
+                      day,
+                      month,
+                      year,
+                      hours
+                    ),
+                    client.settings?.jsonSettings?.email || client.email
+                  );
+                }
                 return res.status(200).json(newAppoiment._id);
               }
             );

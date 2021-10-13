@@ -12,8 +12,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "Stacklycode@gmail.com",
-    pass: "XHG|d%|/=Y,fc6*|q1d1",
+    user: "mailcomebackapp@gmail.com",
+    pass: "spdqtjbqfvcigyci",
   },
 });
 
@@ -98,9 +98,7 @@ export const registerClient = async (req: Request, res: Response) => {
       });
       await mailer(
         TemplateEmail(
-          `https://comeback-ts.com/verify/${createTokenEmail(
-            newClient._id
-          )}`,
+          `https://comeback-ts.com/verify/${createTokenEmail(newClient._id)}`,
           newClient.name || newClient.username
         ),
         newClient.email
