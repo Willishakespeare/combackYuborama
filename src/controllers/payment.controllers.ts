@@ -326,48 +326,6 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
   const datatemp: any = jwt.decode(payTokenModel.data);
   const data: any = { ...datatemp, packid };
 
-  // const aTuringRef = db.collection("PlanesSalud").doc("plan1");
-
-  // await aTuringRef.set({
-  //   name: "plan1",
-  //   packid: data.packid,
-  //   packagesPlans: [
-  //     {
-  //       name: "Mon",
-  //       appoiments: [
-  //         "Reflexiones diarias",
-  //         "Terapias de grupo",
-  //         "Introducción al trabajo de 12 pasos",
-  //       ],
-  //     },
-  //     {
-  //       name: "Tue",
-  //       appoiments: ["Reflexiones diarias", "Psicoeducativas"],
-  //     },
-  //     {
-  //       name: "Wed",
-  //       appoiments: [
-  //         "Reflexiones diarias",
-  //         "Terapias de grupo",
-  //         "Terapia individual",
-  //       ],
-  //     },
-  //     {
-  //       name: "Thu",
-  //       appoiments: ["Reflexiones diarias", "Psicoeducativas"],
-  //     },
-  //     {
-  //       name: "Fri",
-  //       appoiments: [
-  //         "Reflexiones diarias",
-  //         "Terapias de grupo",
-  //         "Psicoeducativa familiar",
-  //       ],
-  //     },
-  //   ],
-  //   days: 7,
-  // });
-
   const getPlanes = await db
     .collection("Planes")
     .get()
@@ -535,7 +493,6 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
       newTempo.map((e: any) => {
         e.temp.map(async (e2: any) => {
           if (e2.url) {
-            console.log(e2);
             const newAppoiment = new Appoiment({
               name: "New Appoiment",
               desc: "Appoiment Description",
@@ -592,8 +549,7 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
               ) {
                 await webpush.sendNotification(doctor?.subscription, payload);
               }
-            } catch (error: any) {
-            }
+            } catch (error: any) {}
             if (doctor?.settings.jsonSettings.notify_email_appointment) {
               await mailer(
                 TemplateDoctor(
@@ -604,10 +560,22 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
                   e2.date.getFullYear(),
                   e2.hour.hours
                 ),
-                doctor?.settings?.jsonSettings?.email || doctor.email
+                doctor?.settings?.jsonSettings?.email
+              );
+            } else {
+              await mailer(
+                TemplateDoctor(
+                  doctor?.name || doctor?.username,
+                  e2.url,
+                  e2.date.getDate(),
+                  e2.date.getMonth() + 1,
+                  e2.date.getFullYear(),
+                  e2.hour.hours
+                ),
+                doctor.email
               );
             }
-            if (client?.email) {
+            if (client?.settings.jsonSettings.notify_email_appointment) {
               await mailer(
                 TemplateEmail(
                   doctor.name || doctor.username,
@@ -617,7 +585,19 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
                   e2.date.getFullYear(),
                   e2.hour.hours
                 ),
-                client.settings?.jsonSettings?.email || client.email
+                client.settings?.jsonSettings?.email
+              );
+            } else {
+              await mailer(
+                TemplateEmail(
+                  doctor.name || doctor.username,
+                  e2.url,
+                  e2.date.getDate(),
+                  e2.date.getMonth() + 1,
+                  e2.date.getFullYear(),
+                  e2.hour.hours
+                ),
+                client.email
               );
             }
           } else {

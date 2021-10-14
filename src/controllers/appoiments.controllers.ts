@@ -14,7 +14,7 @@ import webpush from "web-push";
 import { calendar_v3, google } from "googleapis";
 import { OAuth2Client } from "google-auth-library";
 import axios from "axios";
-import mailgun from "mailgun-js";
+// import mailgun from "mailgun-js";
 
 const CREDENCIALS = {
   type: "service_account",
