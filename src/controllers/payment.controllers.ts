@@ -47,7 +47,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "mailcomebackapp@gmail.com",
-    pass: "spdqtjbqfvcigyci",
+    pass: "lzzssnicvnhzotqj",
   },
 });
 
@@ -451,6 +451,7 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
           const newtemp = Plan.packagesPlans.find(
             (itemPlan: any) => itemPlan.name === e
           );
+
           const temp = Days.map((itemD: any) => {
             const getHour = newtemp.appoiments.find(
               (temphour: any) => temphour.hour.values === itemD.values
@@ -490,131 +491,140 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
         })
         .filter((e: any) => e !== undefined);
 
-      newTempo.map((e: any) => {
-        e.temp.map(async (e2: any) => {
-          if (e2.url) {
-            const newAppoiment = new Appoiment({
-              name: "New Appoiment",
-              desc: "Appoiment Description",
-              details: "Appoiment Details",
-              day: e2.date.getDate(),
-              month: e2.date.getMonth() + 1,
-              year: e2.date.getFullYear(),
-              hours: e2.hour.hours,
-              recomendation: "Appoiment Recomendation",
-              doctorid: e.id,
-              clientid: data.idclient,
-              urlzoom: e2.url,
-              hosturlzoom: e2.url,
-            });
-            await Client.updateOne(
-              { _id: data.clientid },
-              { $push: { appoiments: newAppoiment._id } }
-            );
-            await Doctor.updateOne(
-              { _id: e.id },
-              { $push: { appoiments: newAppoiment._id } }
-            );
-            newAppoiment.save();
-            const doctor: any = await Doctor.findOne({
-              _id: e.id,
-            }).populate("settings", "-__v");
-            const client: any = await Client.findOne({
-              _id: data.idclient,
-            }).populate("settings", "-__v");
-            try {
-              const payload = JSON.stringify({
-                type: "appoiment",
-                title: "Hi You Have A New Appoiment",
-                message: "Enter your inbox and check your new emails",
+      Array.from({ length: Plan.weeks || 1 }, (_, i) => i).map((daysarray) => {
+        newTempo.map((e: any) => {
+          e.temp.map(async (e2: any) => {
+            if (e2.url) {
+              const newDATE = new Date(
+                e2.date.setDate(e2.date.getDate() + daysarray * 7)
+              );
+              const newAppoiment = new Appoiment({
+                name: "New Appoiment",
+                desc: "Appoiment Description",
+                details: "Appoiment Details",
+                day: newDATE.getDate(),
+                month: newDATE.getMonth() + 1,
+                year: newDATE.getFullYear(),
+                hours: e2.hour.hours,
+                recomendation: "Appoiment Recomendation",
+                doctorid: e.id,
+                clientid: data.idclient,
+                urlzoom: e2.url,
+                hosturlzoom: e2.url,
               });
-              webpush.setVapidDetails(
-                "mailto:test@comeback.com",
-                public_key,
-                private_key
+              await Client.updateOne(
+                { _id: data.clientid },
+                { $push: { appoiments: newAppoiment._id } }
               );
-              if (
-                client?.subscription &&
-                client?.settings?.jsonSettings?.notify_appointment
-              ) {
-                try {
-                  await webpush.sendNotification(client?.subscription, payload);
-                } catch (error: any) {
-                  console.log(error);
+              await Doctor.updateOne(
+                { _id: e.id },
+                { $push: { appoiments: newAppoiment._id } }
+              );
+              newAppoiment.save();
+              const doctor: any = await Doctor.findOne({
+                _id: e.id,
+              }).populate("settings", "-__v");
+              const client: any = await Client.findOne({
+                _id: data.idclient,
+              }).populate("settings", "-__v");
+              try {
+                const payload = JSON.stringify({
+                  type: "appoiment",
+                  title: "Hi You Have A New Appoiment",
+                  message: "Enter your inbox and check your new emails",
+                });
+                webpush.setVapidDetails(
+                  "mailto:test@comeback.com",
+                  public_key,
+                  private_key
+                );
+                if (
+                  client?.subscription &&
+                  client?.settings?.jsonSettings?.notify_appointment
+                ) {
+                  try {
+                    await webpush.sendNotification(
+                      client?.subscription,
+                      payload
+                    );
+                  } catch (error: any) {
+                    console.log(error);
+                  }
                 }
+                if (
+                  doctor?.subscription &&
+                  doctor?.settings?.jsonSettings?.notify_appointment
+                ) {
+                  await webpush.sendNotification(doctor?.subscription, payload);
+                }
+              } catch (error: any) {}
+              if (doctor?.settings.jsonSettings.notify_email_appointment) {
+                await mailer(
+                  TemplateDoctor(
+                    doctor?.name || doctor?.username,
+                    e2.url,
+                    newDATE.getDate(),
+                    newDATE.getMonth() + 1,
+                    newDATE.getFullYear(),
+                    e2.hour.hours
+                  ),
+                  doctor?.settings?.jsonSettings?.email
+                );
+              } else {
+                await mailer(
+                  TemplateDoctor(
+                    doctor?.name || doctor?.username,
+                    e2.url,
+                    newDATE.getDate(),
+                    newDATE.getMonth() + 1,
+                    newDATE.getFullYear(),
+                    e2.hour.hours
+                  ),
+                  doctor.email
+                );
               }
-              if (
-                doctor?.subscription &&
-                doctor?.settings?.jsonSettings?.notify_appointment
-              ) {
-                await webpush.sendNotification(doctor?.subscription, payload);
+              if (client?.settings.jsonSettings.notify_email_appointment) {
+                await mailer(
+                  TemplateEmail(
+                    doctor.name || doctor.username,
+                    e2.url,
+                    newDATE.getDate(),
+                    newDATE.getMonth() + 1,
+                    newDATE.getFullYear(),
+                    e2.hour.hours
+                  ),
+                  client.settings?.jsonSettings?.email
+                );
+              } else {
+                await mailer(
+                  TemplateEmail(
+                    doctor.name || doctor.username,
+                    e2.url,
+                    newDATE.getDate(),
+                    newDATE.getMonth() + 1,
+                    newDATE.getFullYear(),
+                    e2.hour.hours
+                  ),
+                  client.email
+                );
               }
-            } catch (error: any) {}
-            if (doctor?.settings.jsonSettings.notify_email_appointment) {
-              await mailer(
-                TemplateDoctor(
-                  doctor?.name || doctor?.username,
-                  e2.url,
-                  e2.date.getDate(),
-                  e2.date.getMonth() + 1,
-                  e2.date.getFullYear(),
-                  e2.hour.hours
-                ),
-                doctor?.settings?.jsonSettings?.email
-              );
             } else {
-              await mailer(
-                TemplateDoctor(
-                  doctor?.name || doctor?.username,
-                  e2.url,
-                  e2.date.getDate(),
-                  e2.date.getMonth() + 1,
-                  e2.date.getFullYear(),
-                  e2.hour.hours
-                ),
-                doctor.email
-              );
             }
-            if (client?.settings.jsonSettings.notify_email_appointment) {
-              await mailer(
-                TemplateEmail(
-                  doctor.name || doctor.username,
-                  e2.url,
-                  e2.date.getDate(),
-                  e2.date.getMonth() + 1,
-                  e2.date.getFullYear(),
-                  e2.hour.hours
-                ),
-                client.settings?.jsonSettings?.email
-              );
-            } else {
-              await mailer(
-                TemplateEmail(
-                  doctor.name || doctor.username,
-                  e2.url,
-                  e2.date.getDate(),
-                  e2.date.getMonth() + 1,
-                  e2.date.getFullYear(),
-                  e2.hour.hours
-                ),
-                client.email
-              );
-            }
-          } else {
-          }
+          });
+
+          // e.temp.map(async (e2: any, index2: any) => {
+          //   try {
+          //     req.body = {
+
+          //     };
+          //     insertAppoimentCreate(req);
+          //   } catch (error: any) {
+          //     return res.status(200).send(error);
+          //   }
+          // });
         });
-
-        // e.temp.map(async (e2: any, index2: any) => {
-        //   try {
-        //     req.body = {
-
-        //     };
-        //     insertAppoimentCreate(req);
-        //   } catch (error: any) {
-        //     return res.status(200).send(error);
-        //   }
-        // });
       });
+
       return res.status(200).json({ msg: `appoiments creadas` });
     } catch (error: any) {
       console.log(error);
