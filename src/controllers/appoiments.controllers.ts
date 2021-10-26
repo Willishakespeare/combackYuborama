@@ -215,12 +215,11 @@ export const insertAppoiment = async (req: Request, res: Response) => {
           "December",
         ];
 
-        const dat = `${day} ${months[month]} ${year}`;
+        const dat = `${day} ${months[month - 1]} ${year}`;
 
         const date = new Date(
-          `${months[month]} ${day}, ${year} ${hours.replace(/\s+/g, "")}:00`
+          `${months[month - 1]} ${day}, ${year} ${hours.replace(/\s+/g, "")}:00`
         );
-
         axios
           .post("https://www.googleapis.com/oauth2/v4/token", {
             client_id: `531580369890-n6nn3ml1894mjeephca57cico3tonsgh.apps.googleusercontent.com`,
