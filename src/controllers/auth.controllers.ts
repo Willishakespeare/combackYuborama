@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "mailcomebackapp@gmail.com",
-    pass: "spdqtjbqfvcigyci",
+    pass: "zcbekdcdxzntfrtk",
   },
 });
 

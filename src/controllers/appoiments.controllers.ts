@@ -214,7 +214,12 @@ export const insertAppoiment = async (req: Request, res: Response) => {
           "November",
           "December",
         ];
-        const date = new Date(`${months[month]} ${day}, ${year} ${hours}:00`);
+
+        const dat = `${day} ${months[month]} ${year}`;
+
+        const date = new Date(
+          `${months[month]} ${day}, ${year} ${hours.replace(/\s+/g, "")}:00`
+        );
 
         axios
           .post("https://www.googleapis.com/oauth2/v4/token", {
@@ -237,11 +242,11 @@ export const insertAppoiment = async (req: Request, res: Response) => {
               location: "",
               description: "",
               start: {
-                dateTime: date.toISOString(),
+                dateTime: date?.toISOString(),
                 timeZone: "America/Los_Angeles",
               },
               end: {
-                dateTime: date.toISOString(),
+                dateTime: date?.toISOString(),
                 timeZone: "America/Los_Angeles",
               },
               attendees: [{ email: doctor.email }, { email: client.email }],

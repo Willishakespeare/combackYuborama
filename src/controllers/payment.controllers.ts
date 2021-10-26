@@ -47,7 +47,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "mailcomebackapp@gmail.com",
-    pass: "lzzssnicvnhzotqj",
+    pass: "qrvjgifkntbbplqv",
   },
 });
 
