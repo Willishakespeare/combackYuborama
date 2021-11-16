@@ -316,7 +316,7 @@ const DaysD: any = [
 
 export const payAcceptedPackages = async (req: Request, res: Response) => {
   const { idpay, packid } = req.body;
-  if (!idpay) {
+  if (!idpay || !packid) {
     return res.status(200).json({ msg: "send all data" });
   }
   const payTokenModel = await PayTokenModel.findById(idpay);
@@ -508,10 +508,11 @@ export const payAcceptedPackages = async (req: Request, res: Response) => {
                 hours: e2.hour.hours,
                 recomendation: "Appoiment Recomendation",
                 doctorid: e.id,
-                clientid: data.idclient,
+                clientid: data.clientid,
                 urlzoom: e2.url,
                 hosturlzoom: e2.url,
               });
+
               await Client.updateOne(
                 { _id: data.clientid },
                 { $push: { appoiments: newAppoiment._id } }
